@@ -14,6 +14,9 @@ use Filament\Resources\Resource;
 use Filament\Support\RawJs;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -22,9 +25,10 @@ class TicketTypeResource extends Resource
 {
     protected static ?string $model = TicketType::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-ticket';
 
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 3;
+    protected static ?string $navigationGroup = 'Event Management';
 
 
     public static function form(Form $form): Form
@@ -89,8 +93,13 @@ class TicketTypeResource extends Resource
                     ->searchable(),
             ])
             ->filters([
-                //
-            ])
+                SelectFilter::make('event_id')
+                    ->label('Event')
+                    ->searchable()
+                    ->options(Event::all()->pluck('name', 'id'))
+                    ->placeholder('Select Event'),
+            ], layout: FiltersLayout::AboveContent)
+            ->filtersFormColumns(3)
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
