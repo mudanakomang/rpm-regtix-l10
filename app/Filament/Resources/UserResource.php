@@ -38,11 +38,20 @@ class UserResource extends Resource
                     ->email()
                     ->maxLength(255),
                 TextInput::make('password')
+                    ->label('Password')
                     ->password()
                     ->required(fn(string $context) => $context === 'create') // hanya required saat create
                     ->dehydrateStateUsing(fn($state) => filled($state) ? bcrypt($state) : null)
-                    ->dehydrated(fn($state) => filled($state))
-                    ->maxLength(255),
+                    ->dehydrated(fn($state) => filled($state)) // hanya dehydrate jika diisi
+                    ->maxLength(255)
+                    ->same('password_confirmation'), // tambahkan validasi sama dengan konfirmasi
+
+                TextInput::make('password_confirmation')
+                    ->label('Confirm Password')
+                    ->password()
+                    ->visible(fn(string $context) => $context === 'create' || $context === 'edit') // hanya tampil saat create/edit
+                    ->dehydrated(false), // tidak dikirim ke model
+
                 Radio::make('role_id')  // Gunakan Radio untuk memilih role
                     ->label('Role')
                     ->options(Role::pluck('label', 'id')->toArray())  // Mengambil semua role
