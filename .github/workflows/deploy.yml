@@ -1,0 +1,32 @@
+name: Deploy Laravel App
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Deploy via SSH
+      uses: appleboy/ssh-action@v0.1.10
+      with:
+        host: 151.106.124.185
+        username: u246553790
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: 65002
+        script: |
+          cd /home/u246553790/domains/regtix.id/public_html/rpm
+          git pull origin main
+          /opt/alt/php82/usr/bin/php /usr/local/bin/composer2 install --no-dev --optimize-autoloader         
+          /opt/alt/php82/usr/bin/php artisan migrate:refresh --seed          
+          /opt/alt/php82/usr/bin/php artisan config:clear
+          /opt/alt/php82/usr/bin/php artisan cache:clear
+          /opt/alt/php82/usr/bin/php artisan route:clear
+          /opt/alt/php82/usr/bin/php artisan view:clear
+          /opt/alt/php82/usr/bin/php artisan optimize:clear
+          /opt/alt/php82/usr/bin/php artisan route:cache
