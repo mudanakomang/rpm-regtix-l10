@@ -29,6 +29,8 @@ class Registration extends Model
         'bib_name',
         'reg_id',
         'is_validated',
+        'validated_by',
+        'registration_date'
     ];
 
     public function ticketType()
@@ -38,5 +40,10 @@ class Registration extends Model
     public function event()
     {
         return $this->hasOneThrough(Event::class, TicketType::class, 'id', 'id', 'ticket_type_id', 'event_id');
+    }
+
+    public function validator()
+    {
+        return $this->belongsTo(User::class, 'validated_by');
     }
 }

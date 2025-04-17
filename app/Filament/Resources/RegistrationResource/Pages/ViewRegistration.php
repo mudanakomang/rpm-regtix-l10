@@ -28,7 +28,7 @@ class ViewRegistration extends EditRecord
                 ->requiresConfirmation()
                 ->color('success')
                 ->action(function ($record) {
-                    $record->update([...$this->data, 'is_validated' => true]);
+                    $record->update([...$this->data, 'is_validated' => true, 'validated_by' => auth()->user()->id]);
                     $this->getSavedNotification()?->send();
                 }),
 

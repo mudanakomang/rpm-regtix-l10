@@ -51,4 +51,9 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Role::class);
     }
+
+    public function validatedRegistrations()
+    {
+        return $this->hasMany(Registration::class, 'validated_by');
+    }
 }

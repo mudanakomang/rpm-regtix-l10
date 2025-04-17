@@ -27,7 +27,7 @@
     .header {
       text-align: center;
       margin-bottom: 1cm;
-      border-bottom: 2px solid #000;
+      border-bottom: 1px solid #000;
       padding-bottom: 0.5cm;
     }
 
@@ -101,7 +101,11 @@
     </div>
 
     <div class="content">
-      <h3>Informasi Pribadi</h3>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h3>Informasi Pribadi</h3>
+        <span style="font-size: 14px;"><strong>Validator:</strong> {{ $registration->validator->name }}</span>
+
+        </div>
       <table>
         <tr><th width="30%">Nama Lengkap</th><td>{{ $registration->full_name }}</td></tr>
         <tr><th>Email</th><td>{{ $registration->email }}</td></tr>

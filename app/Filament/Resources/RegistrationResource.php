@@ -37,7 +37,7 @@ class RegistrationResource extends Resource
 
     protected static ?int $navigationSort = 4;
 
-    protected static ?string $navigationGroup = 'Event Management';
+    protected static ?string $navigationGroup = 'Race Pack Management';
 
 
     public static function form(Form $form): Form
