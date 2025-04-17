@@ -6,10 +6,12 @@ use App\Filament\Resources\RegistrationResource\Pages;
 use App\Filament\Resources\RegistrationResource\RelationManagers;
 use App\Models\Registration;
 use App\Models\TicketType;
+use Dom\Text;
 use Filament\Tables\Actions\Action;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -42,6 +44,21 @@ class RegistrationResource extends Resource
     {
         return $form
             ->schema([
+                TextInput::make('full_name')
+                    ->label('Full Name')
+                    ->required()
+                    ->maxLength(255),
+                TextInput::make('email')
+                    ->label('Email')
+                    ->email()
+                    ->required()
+                    ->maxLength(255),
+                TextInput::make('phone')
+                    ->label('Phone')
+                    ->tel()
+                    ->required()
+                    ->telRegex('/^(\+62|62|0)8[1-9][0-9]{6,9}$/')
+                    ->maxLength(15),
                 //
             ]);
     }
@@ -192,16 +209,10 @@ class RegistrationResource extends Resource
             ], layout: FiltersLayout::AboveContent)
             ->filtersFormColumns(2)
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\Action::make('validate')
-                    ->label('Validate')
-                    ->icon('heroicon-m-check-badge')
-                    ->requiresConfirmation()
+                Tables\Actions\ViewAction::make()
                     ->color('success')
-                    ->action(function ($record) {
-                        $record->update(['is_validated' => true]);
-                    })
-                    ->visible(fn($record) => ! $record->is_validated),
+                    ->icon('heroicon-o-eye')
+                    ->label('View'),
             ], position: ActionsPosition::BeforeColumns)
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -223,6 +234,7 @@ class RegistrationResource extends Resource
             'index' => Pages\ListRegistrations::route('/'),
             'create' => Pages\CreateRegistration::route('/create'),
             'edit' => Pages\EditRegistration::route('/{record}/edit'),
+            'view' => Pages\ViewRegistration::route('/{record}'),
         ];
     }
 }

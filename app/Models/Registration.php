@@ -37,6 +37,6 @@ class Registration extends Model
     }
     public function event()
     {
-        return $this->hasOneThrough(Event::class, TicketType::class);
+        return $this->hasOneThrough(Event::class, TicketType::class, 'id', 'id', 'ticket_type_id', 'event_id');
     }
 }
