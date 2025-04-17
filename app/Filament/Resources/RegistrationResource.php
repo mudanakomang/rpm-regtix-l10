@@ -111,7 +111,7 @@ class RegistrationResource extends Resource
                 Select::make('country')
                     ->label('Country')
                     ->required()
-                    ->options(CountryListHelper::get('id'))
+                    ->options(CountryListHelper::get('id', true))
                     ->searchable()
                     ->placeholder('Select Country')
                     ->reactive(),
@@ -138,7 +138,7 @@ class RegistrationResource extends Resource
                 Select::make('nationality')
                     ->label('Nationality')
                     ->required()
-                    ->options(CountryListHelper::get('id'))
+                    ->options(CountryListHelper::get('id', true))
                     ->searchable()
                     ->placeholder('Select Nationality')
                     ->reactive(),
