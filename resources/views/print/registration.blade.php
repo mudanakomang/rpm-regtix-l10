@@ -129,6 +129,15 @@
         <h3>Detail Pendaftaran</h3>
         <table>
             <tr><th width="30%">Tanggal Daftar</th><td>{{ $registration->created_at->format('d/m/Y H:i') }}</td></tr>
+            <tr>
+                <th>Tipe Tiket</th>
+                <td>
+                    {{ $registration->ticketType->name }}
+                    @if ($registration->ticketType->price > 0)
+                        ({{ 'Rp. ' . number_format($registration->ticketType->price, 0, ',', '.') }})
+                    @endif
+                </td>
+            </tr>
             <tr><th>Ukuran Jersey</th><td>{{ $registration->jersey_size }}</td></tr>
             <tr><th>Nama Komunitas</th><td>{{ $registration->community_name }}</td></tr>
             <tr><th>Nama di BIB</th><td>{{ $registration->bib_name }}</td></tr>

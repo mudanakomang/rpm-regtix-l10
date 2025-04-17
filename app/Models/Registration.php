@@ -6,8 +6,38 @@ use Illuminate\Database\Eloquent\Model;
 
 class Registration extends Model
 {
+    const GENDER = [
+        'Male' => 'Male',
+        'Female' => 'Female'
+    ];
+
+    const ID_CARD_TYPE = [
+        'KTP' => 'KTP',
+        'SIM' => 'SIM',
+        'Kartu Pelajar' => 'Kartu Pelajar',
+        'Passport' => 'Passport',
+        'KITAS' => 'KITAS',
+        'KITAP' => 'KITAP',
+        'Other' => 'Other'
+    ];
+
+    const JERSEY_SIZES = [
+        'S' => 'S',
+        'M' => 'M',
+        'L' => 'L',
+        'XL' => 'XL',
+        'XXL' => 'XXL',
+    ];
+
+    const BLOOD_TYPE = [
+        'A' => 'A',
+        'B' => 'B',
+        'AB' => 'AB',
+        'O' => 'O',
+    ];
     //
     protected $fillable = [
+        'ticket_type_id',
         'full_name',
         'email',
         'phone',

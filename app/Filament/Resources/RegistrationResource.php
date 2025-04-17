@@ -3,18 +3,16 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\RegistrationResource\Pages;
-use App\Filament\Resources\RegistrationResource\RelationManagers;
+use App\Helpers\CountryListHelper;
 use App\Models\Registration;
 use App\Models\TicketType;
-use Dom\Text;
 use Filament\Tables\Actions\Action;
-use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Radio;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
-use Illuminate\Database\Eloquent\Collection;
-
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
@@ -24,9 +22,6 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Filament\Tables\Filters\Layout;
-use Illuminate\Database\Eloquent\Model;
 
 
 class RegistrationResource extends Resource
@@ -40,10 +35,37 @@ class RegistrationResource extends Resource
     protected static ?string $navigationGroup = 'Race Pack Management';
 
 
+    private static function calculateNextRegId(): string
+    {
+        // Ambil reg_id terakhir (misalnya '001', '002')
+        $lastRegId = Registration::orderByDesc('id')->first()->id ?? '000';
+
+        // Ambil angka dari reg_id (misalnya '001' => 1)
+        $lastNumber = (int) $lastRegId;
+
+        // Increment angka
+        $next = $lastNumber + 1;
+
+        // Format menjadi 3 digit (misalnya 2 => '002')
+        return str_pad($next, 3, '0', STR_PAD_LEFT);
+    }
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
+                Select::make('ticket_type_id')
+                    ->label('Ticket Type') // Label untuk field
+                    ->options(
+                        TicketType::with('event')->get()->mapWithKeys(function ($ticketType) {
+                            return [
+                                $ticketType->id => $ticketType->name . ' - ' . ($ticketType->event->name ?? 'No Event'),
+                            ];
+                        })->toArray()
+                    ) // Mengambil nama dan ID event dari model Event
+                    ->required()
+                    ->searchable() // Membolehkan pencarian event
+                    ->placeholder('Pick a Ticket Type'),
                 TextInput::make('full_name')
                     ->label('Full Name')
                     ->required()
@@ -57,9 +79,101 @@ class RegistrationResource extends Resource
                     ->label('Phone')
                     ->tel()
                     ->required()
-                    ->telRegex('/^(\+62|62|0)8[1-9][0-9]{6,9}$/')
+                    ->regex('/^(\+62|62|0)8[1-9][0-9]{6,9}$/')
                     ->maxLength(15),
-                //
+                Radio::make('gender')
+                    ->label('Gender') // Label untuk field
+                    ->options(Registration::GENDER) // Mengambil nama dan ID event dari model Event
+                    ->required()
+                    ->inline() // Menampilkan pilihan secara horizontal
+                    ->reactive(),
+                TextInput::make('place_of_birth')
+                    ->label('Place of Birth')
+                    ->required()
+                    ->maxLength(255),
+                DatePicker::make('dob')
+                    ->label('Date of Birth')
+                    ->required()
+                    ->maxDate(now())
+                    ->placeholder('Select Date of Birth'),
+                TextInput::make('address')
+                    ->label('Address')
+                    ->required()
+                    ->maxLength(255),
+                TextInput::make('district')
+                    ->label('District')
+                    ->required()
+                    ->maxLength(255),
+                TextInput::make('province')
+                    ->label('Province')
+                    ->required()
+                    ->maxLength(255),
+                Select::make('country')
+                    ->label('Country')
+                    ->required()
+                    ->options(CountryListHelper::get('id'))
+                    ->searchable()
+                    ->placeholder('Select Country')
+                    ->reactive(),
+                Select::make('id_card_type')
+                    ->label('ID Card Type') // Label untuk field
+                    ->options(Registration::ID_CARD_TYPE) // Mengambil nama dan ID event dari model Event
+                    ->required()
+                    ->searchable() // Membolehkan pencarian event
+                    ->placeholder('Pick an ID Card Type'),
+                TextInput::make('id_card_number')
+                    ->label('ID Card Number')
+                    ->required()
+                    ->maxLength(255),
+                TextInput::make('emergency_contact_name')
+                    ->label('Emergency Contact Name')
+                    ->required()
+                    ->maxLength(255),
+                TextInput::make('emergency_contact_phone')
+                    ->label('Emergency Contact Phone')
+                    ->required()
+                    ->tel()
+                    ->regex('/^(\+62|62|0)8[1-9][0-9]{6,9}$/')
+                    ->maxLength(15),
+                Select::make('nationality')
+                    ->label('Nationality')
+                    ->required()
+                    ->options(CountryListHelper::get('id'))
+                    ->searchable()
+                    ->placeholder('Select Nationality')
+                    ->reactive(),
+                Select::make('ticket_type_id')
+                    ->label('Ticket Type') // Label untuk field
+                    ->options(
+                        TicketType::with('event')->get()->mapWithKeys(function ($ticketType) {
+                            return [
+                                $ticketType->id => $ticketType->name . ' - ' . ($ticketType->event->name ?? 'No Event'),
+                            ];
+                        })->toArray()
+                    ) // Mengambil nama dan ID event dari model Event
+                    ->required()
+                    ->searchable() // Membolehkan pencarian event
+                    ->placeholder('Pick a Ticket Type'),
+                Select::make('jersey_size')
+                    ->label('Jersey Size') // Label untuk field
+                    ->options(Registration::JERSEY_SIZES) // Mengambil nama dan ID event dari model Event
+                    ->required()
+                    ->searchable() // Membolehkan pencarian event
+                    ->placeholder('Pick a Jersey Size'),
+                TextInput::make('community_name')
+                    ->label('Community Name')
+                    ->maxLength(255),
+                TextInput::make('bib_name')
+                    ->label('BIB Name')
+                    ->maxLength(255),
+                TextInput::make('reg_id')
+                    ->label('Registration ID')
+                    ->required()
+                    ->maxLength(255)
+                    ->default(fn($record) => $record ? $record->reg_id : self::calculateNextRegId())
+                    ->readOnly(fn($record) => $record && $record->exists),
+                Hidden::make('registration_date')
+                    ->default(now())
             ]);
     }
 
