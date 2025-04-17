@@ -48,6 +48,9 @@ class EventResource extends Resource
                     ->required()
                     ->label('Location')
                     ->maxLength(255),
+                TextInput::make('code_prefix')
+                    ->label('Code Prefix')
+                    ->maxLength(255),
             ]);
     }
 
@@ -72,6 +75,10 @@ class EventResource extends Resource
                     ->sortable(),
                 TextColumn::make('location')
                     ->label('Location')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('code_prefix')
+                    ->label('Code Prefix')
                     ->searchable()
                     ->sortable(),
             ])

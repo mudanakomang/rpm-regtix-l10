@@ -11,6 +11,7 @@ class Event extends Model
         'start_date',
         'end_date',
         'location',
+        'code_prefix',
     ];
     public function ticketTypes()
     {

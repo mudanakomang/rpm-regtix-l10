@@ -7,6 +7,7 @@ use Filament\Actions;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
+use Illuminate\Support\Facades\Auth;
 
 class ViewRegistration extends EditRecord
 {
@@ -28,7 +29,7 @@ class ViewRegistration extends EditRecord
                 ->requiresConfirmation()
                 ->color('success')
                 ->action(function ($record) {
-                    $record->update([...$this->data, 'is_validated' => true, 'validated_by' => auth()->user()->id]);
+                    $record->update([...$this->data, 'is_validated' => true, 'validated_by' => Auth::user()->id]);
                     $this->getSavedNotification()?->send();
                 }),
 

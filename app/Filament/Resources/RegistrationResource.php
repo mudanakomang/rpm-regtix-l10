@@ -163,6 +163,18 @@ class RegistrationResource extends Resource
                     ->searchable(),
             ])
             ->filters([
+                Filter::make('reg_id')
+                    ->columns(1)
+                    ->label('Registration ID')
+                    ->form([
+                        TextInput::make('reg_id')
+                            ->label('Registration ID'),
+                    ])
+                    ->query(function (Builder $query, array $data) {
+                        return $query->when($data['reg_id'], function ($query, $reg_id) {
+                            $query->where('reg_id', 'like', "%{$reg_id}%");
+                        });
+                    }),
                 SelectFilter::make('ticket_type_id')
                     ->label('Ticket Type')
                     ->columns(1)
@@ -176,7 +188,7 @@ class RegistrationResource extends Resource
                     ),
                 SelectFilter::make('is_validated')
                     ->label('Status')
-                    ->columns(2)
+                    ->columns(1)
                     ->options([
                         '1' => 'Validated',
                         '0' => 'Not Validated',
@@ -207,8 +219,18 @@ class RegistrationResource extends Resource
                     }),
 
             ], layout: FiltersLayout::AboveContent)
-            ->filtersFormColumns(2)
+            ->filtersFormColumns(3)
             ->actions([
+                Action::make('print')
+                    ->label('Print')
+                    ->icon('heroicon-m-printer')
+                    ->url(function ($record) {
+                        return route('registration.print', $record->id);
+                    })
+                    ->openUrlInNewTab()
+                    ->visible(function ($record) {
+                        return $record->is_validated;
+                    }),
                 Tables\Actions\ViewAction::make()
                     ->color('success')
                     ->icon('heroicon-o-eye')

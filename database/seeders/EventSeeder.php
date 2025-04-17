@@ -19,6 +19,7 @@ class EventSeeder extends Seeder
             'start_date' => '2025-05-12 06:00:00',
             'end_date' => '2025-05-12 12:00:00',
             'location' => 'Mango Lango Lake, Jl. Sawo Bakbakan, Bitera, Gianyar, Bali',
+            'code_prefix' => 'SS99',
         ]);
 
         $ticketTypes = [

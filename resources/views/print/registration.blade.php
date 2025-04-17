@@ -39,6 +39,7 @@
       width: 100%;
       border-collapse: collapse;
       margin: 0.5cm 0;
+      line-height: 0.8rem;
     }
 
     table, th, td {
@@ -97,7 +98,7 @@
     <div class="header">
       <h2>DATA PENDAFTARAN</h2>
       <h3>{{ $registration->event->name }}</h3>
-      <strong>ID Registrasi: SSR99{{ $registration->reg_id }}</strong>
+      <strong>ID Registrasi: {{ $registration->event->code_prefix }}{{ $registration->reg_id }}</strong>
     </div>
 
     <div class="content">
@@ -131,7 +132,7 @@
             <tr><th>Ukuran Jersey</th><td>{{ $registration->jersey_size }}</td></tr>
             <tr><th>Nama Komunitas</th><td>{{ $registration->community_name }}</td></tr>
             <tr><th>Nama di BIB</th><td>{{ $registration->bib_name }}</td></tr>
-            <tr><th>ID Registrasi</th><td>SSR99{{ $registration->reg_id }}</td></tr>
+            <tr><th>ID Registrasi</th><td>{{$registration->event->code_prefix}}{{ $registration->reg_id }}</td></tr>
         </table>
       </div>
     </div>
