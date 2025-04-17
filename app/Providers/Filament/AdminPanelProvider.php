@@ -37,7 +37,7 @@ class AdminPanelProvider extends PanelProvider
                 Pages\Dashboard::class,
             ])
             ->brandLogo(asset('images/logo.svg'))
-            ->brandLogoHeight('3.5rem')
+            ->brandLogoHeight('5rem')
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,
