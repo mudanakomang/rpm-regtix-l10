@@ -348,7 +348,12 @@ class RegistrationResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->persistFiltersInSession(true)
+            ->defaultSort('registration_date', 'desc')
+            ->emptyStateHeading('No Registrations Found')
+            ->paginationPageOptions([10, 25, 50, 100])
+            ->defaultPaginationPageOption(50);
     }
 
     public static function getRelations(): array
