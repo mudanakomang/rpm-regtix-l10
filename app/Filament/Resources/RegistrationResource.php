@@ -142,24 +142,18 @@ class RegistrationResource extends Resource
                     ->searchable()
                     ->placeholder('Select Nationality')
                     ->reactive(),
-                Select::make('ticket_type_id')
-                    ->label('Ticket Type') // Label untuk field
-                    ->options(
-                        TicketType::with('event')->get()->mapWithKeys(function ($ticketType) {
-                            return [
-                                $ticketType->id => $ticketType->name . ' - ' . ($ticketType->event->name ?? 'No Event'),
-                            ];
-                        })->toArray()
-                    ) // Mengambil nama dan ID event dari model Event
-                    ->required()
-                    ->searchable() // Membolehkan pencarian event
-                    ->placeholder('Pick a Ticket Type'),
                 Select::make('jersey_size')
                     ->label('Jersey Size') // Label untuk field
                     ->options(Registration::JERSEY_SIZES) // Mengambil nama dan ID event dari model Event
                     ->required()
                     ->searchable() // Membolehkan pencarian event
                     ->placeholder('Pick a Jersey Size'),
+                Select::make('blood_type')
+                    ->label('Blood Type') // Label untuk field
+                    ->options(Registration::BLOOD_TYPE) // Mengambil nama dan ID event dari model Event
+                    ->required()
+                    ->searchable() // Membolehkan pencarian event
+                    ->placeholder('Pick a Blood Type'),
                 TextInput::make('community_name')
                     ->label('Community Name')
                     ->maxLength(255),
