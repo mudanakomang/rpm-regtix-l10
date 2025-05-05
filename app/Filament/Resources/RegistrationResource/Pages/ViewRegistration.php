@@ -28,10 +28,22 @@ class ViewRegistration extends EditRecord
                 ->icon('heroicon-m-check-badge')
                 ->requiresConfirmation()
                 ->color('success')
-                ->action(function ($record) {
-                    $record->update([...$this->data, 'is_validated' => true, 'validated_by' => Auth::user()->id]);
-                    $this->getSavedNotification()?->send();
+                ->action(function ($record, $livewire) {
+                    // Validasi form terlebih dahulu
+                    $data = $livewire->form->getState();
+                    $livewire->form->validate();
+
+                    // Update record dengan data tervalidasi + tambahan kolom
+                    $record->update([
+                        ...$data,
+                        'is_validated' => true,
+                        'validated_by' => Auth::id(),
+                    ]);
+
+                    // Kirim notifikasi "saved"
+                    $livewire->getSavedNotification()?->send();
                 }),
+
 
             Action::make('print')
                 ->label('Print')
