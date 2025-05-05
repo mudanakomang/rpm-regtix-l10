@@ -25,6 +25,7 @@ class DatabaseSeeder extends Seeder
             SpecialPriceCSVSeeder::class,
             RegulerCSVSeeder::class
             // Add other seeders here
+            // Valid
         ]);
     }
 }
