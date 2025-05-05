@@ -22,7 +22,8 @@ class DatabaseSeeder extends Seeder
             FlashSaleCSVSeeder::class,
             EarlyBirdCSVSeeder::class,
             InvitationCSVSeeder::class,
-            SpecialPriceCSVSeeder::class
+            SpecialPriceCSVSeeder::class,
+            RegulerCSVSeeder::class
             // Add other seeders here
         ]);
     }
