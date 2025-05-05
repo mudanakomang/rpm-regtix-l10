@@ -43,9 +43,15 @@ class InvitationCSVSeeder extends Seeder
                     if (isset($data['phone'])) {
                         $data['phone'] = str_replace(["-", " ", "'"], '', $data['phone']);
                     }
+                    if (!preg_match('/^(?:\+62|0)/', $data['phone'])) {
+                        $data['phone'] = '0' . $data['phone'];
+                    }
 
                     if (isset($data['emergency_contact_phone'])) {
                         $data['emergency_contact_phone'] = str_replace(["-", " ", "'"], '', $data['emergency_contact_phone']);
+                    }
+                    if (!preg_match('/^(?:\+62|0)/', $data['emergency_contact_phone'])) {
+                        $data['emergency_contact_phone'] = '0' . $data['emergency_contact_phone'];
                     }
                     $data['ticket_type_id'] = $ticketTypeId;
 
