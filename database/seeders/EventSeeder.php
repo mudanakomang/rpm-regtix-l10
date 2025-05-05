@@ -29,6 +29,7 @@ class EventSeeder extends Seeder
             ['name' => 'Regular', 'price' => 230000, 'quota' => 150],
             ['name' => 'Invitation', 'price' => 0, 'quota' => 200],
             ['name' => 'Community Price', 'price' => 209000, 'quota' => 50],
+            ['name' => 'Sangasian', 'price' => 99000, 'quota' => 60],
         ];
         foreach ($ticketTypes as $type) {
             TicketType::create([
