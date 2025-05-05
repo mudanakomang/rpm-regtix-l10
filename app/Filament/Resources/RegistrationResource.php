@@ -38,7 +38,7 @@ class RegistrationResource extends Resource
     private static function calculateNextRegId(): string
     {
         // Ambil reg_id terakhir (misalnya '001', '002')
-        $lastRegId = Registration::orderByDesc('id')->first()->id ?? '000';
+        $lastRegId = Registration::orderByDesc('reg_id')->first()->id ?? '000';
 
         // Ambil angka dari reg_id (misalnya '001' => 1)
         $lastNumber = (int) $lastRegId;
