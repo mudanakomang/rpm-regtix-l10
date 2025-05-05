@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             EventSeeder::class,
             // RegistrationSeeder::class,
             FlashSaleCSVSeeder::class,
+            EarlyBirdCSVSeeder::class
             // Add other seeders here
         ]);
     }
