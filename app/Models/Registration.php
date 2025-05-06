@@ -76,4 +76,9 @@ class Registration extends Model
     {
         return $this->belongsTo(User::class, 'validated_by');
     }
+
+    public function campaigns()
+    {
+        return $this->belongsToMany(Campaign::class, 'campaign_registration')->withPivot('status')->withTimestamps();
+    }
 }

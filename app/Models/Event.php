@@ -22,4 +22,9 @@ class Event extends Model
     {
         return $this->hasManyThrough(Registration::class, TicketType::class);
     }
+
+    public function campaigns()
+    {
+        return $this->hasMany(Campaign::class);
+    }
 }

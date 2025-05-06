@@ -145,4 +145,8 @@ class EventResource extends Resource
             'edit' => Pages\EditEvent::route('/{record}/edit'),
         ];
     }
+    public static function canViewAny(): bool
+    {
+        return \Illuminate\Support\Facades\Auth::user()?->role?->name === 'admin';
+    }
 }

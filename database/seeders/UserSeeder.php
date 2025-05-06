@@ -30,12 +30,40 @@ class UserSeeder extends Seeder
         ]);
 
         // Create the operator user
-        User::firstOrCreate([
-            'email' => 'operator1@regtix.id',
-        ], [
-            'name' => 'Operator 1',
-            'password' => Hash::make('regtix@123op'),
-            'role_id' => $operatorRole->id,  // Set the role_id to the operator role
-        ]);
+        $operators = [
+            [
+                'email' => 'operator1@regtix.id',
+                'name' => 'Operator 1',
+                'password' => Hash::make('regtix@123op'),
+                'role_id' => $operatorRole->id,  // Set the role_id to the operator role
+            ],
+            [
+                'email' => 'operator2@regtix.id',
+                'name' => 'Operator 2',
+                'password' => Hash::make('regtix@123op'),
+                'role_id' => $operatorRole->id,  // Set the role_id to the operator role
+            ],
+            [
+                'email' => 'operator3@regtix.id',
+                'name' => 'Operator 3',
+                'password' => Hash::make('regtix@123op'),
+                'role_id' => $operatorRole->id,  // Set the role_id to the operator role
+            ],
+            [
+                'email' => 'operator4@regtix.id',
+                'name' => 'Operator 4',
+                'password' => Hash::make('regtix@123op'),
+                'role_id' => $operatorRole->id,  // Set the role_id to the operator role
+            ],
+            [
+                'email' => 'operator5@regtix.id',
+                'name' => 'Operator 5',
+                'password' => Hash::make('regtix@123op'),
+                'role_id' => $operatorRole->id,  // Set the role_id to the operator role
+            ]
+        ];
+        foreach ($operators as $operator) {
+            User::create($operator);
+        }
     }
 }

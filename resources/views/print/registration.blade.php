@@ -8,6 +8,7 @@
       margin: 0;
       padding: 0;
       font-family: Arial, sans-serif;
+      font-size: 12px;
       color: #000;
       background: #fff !important;
     }
@@ -21,25 +22,25 @@
       width: 100%;
       max-width: 17.5cm;
       margin: 0 auto;
-      padding: 0.5cm;
+      padding: 0.3cm;
     }
 
     .header {
       text-align: center;
       margin-bottom: 1cm;
       border-bottom: 1px solid #000;
-      padding-bottom: 0.5cm;
+      padding-bottom: 0.3cm;
     }
 
     .pt-4 {
-      padding-top: 1rem;
+      padding-top: 0.3rem;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
       margin: 0.5cm 0;
-      line-height: 0.8rem;
+      line-height: 0.7rem;
     }
 
     table, th, td {
@@ -143,6 +144,12 @@
             <tr><th>Nama di BIB</th><td>{{ $registration->bib_name }}</td></tr>
             <tr><th>ID Registrasi</th><td>{{$registration->event->code_prefix}}{{ $registration->reg_id }}</td></tr>
         </table>
+      </div>
+      <div class="pt-4">
+        <p><strong>Gianyar, {{ \Carbon\Carbon::now()->locale('id')->isoFormat('D MMMM YYYY') }}</strong></p>
+        <br><br>
+        <p style="border-top: 1px solid #000; width: 30%; margin-top: 3px; padding-bottom: 3px;"></p> 
+        <p>{{ $registration->full_name }}</p>
       </div>
     </div>
   </div>
