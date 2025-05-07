@@ -24,7 +24,8 @@ class DatabaseSeeder extends Seeder
             InvitationCSVSeeder::class,
             SpecialPriceCSVSeeder::class,
             RegulerCSVSeeder::class,
-            CampaignSeeder::class
+            CampaignSeeder::class,
+            SangasianCSVSeeder::class
             // Add other seeders here
             // Valid
         ]);
