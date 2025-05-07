@@ -2,10 +2,13 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Exports\RegistrationExporter;
 use App\Filament\Resources\RegistrationResource\Pages;
 use App\Helpers\CountryListHelper;
 use App\Models\Registration;
 use App\Models\TicketType;
+
+use Filament\Actions\Exports\Enums\Contracts\ExportFormat;
 use Filament\Tables\Actions\Action;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Hidden;
@@ -15,6 +18,8 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Actions\ExportAction;
+use Filament\Tables\Actions\ExportBulkAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Enums\ActionsPosition;
 use Filament\Tables\Enums\FiltersLayout;
@@ -348,7 +353,12 @@ class RegistrationResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                ExportBulkAction::make()
+                    ->label('Export Selected')
+                    ->exporter(RegistrationExporter::class)
+                    ->filename('registrations-' . now()->format('Y-m-d-his'))
+                    ->color('success'),
+            ])
             ])
             ->persistFiltersInSession(true)
             ->defaultSort('registration_date', 'desc')

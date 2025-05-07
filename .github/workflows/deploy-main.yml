@@ -37,4 +37,5 @@ jobs:
           /opt/alt/php82/usr/bin/php artisan view:clear
           /opt/alt/php82/usr/bin/php artisan optimize:clear
           /opt/alt/php82/usr/bin/php artisan route:cache
+          /opt/alt/php82/usr/bin/php artisan queue:work --quiet
 
