@@ -27,10 +27,9 @@ class CampaignSeeder extends Seeder
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Informasi Race Pack - SANGA SANGA RUN 2025</title>
     <style>
-        /* Global Styles */
         body {
             font-family: Arial, sans-serif;
-            background-color: #f8f9fa; /* Warna background yang lebih kalem */
+            background-color: #f8f9fa;
             margin: 0;
             padding: 0;
             color: #333;
@@ -51,7 +50,7 @@ class CampaignSeeder extends Seeder
         }
 
         .container {
-            background-color: #ffffff; /* Putih agar tidak terlalu mencolok */
+            background-color: #ffffff;
             color: #333;
             max-width: 800px;
             margin: 40px auto;
@@ -73,11 +72,11 @@ class CampaignSeeder extends Seeder
 
         .header p {
             font-size: 1.2em;
-            color: #6c757d; /* Warna teks lebih lembut */
+            color: #6c757d;
         }
 
         .highlight {
-            color: #007BFF; /* Biru yang tidak mencolok */
+            color: #007BFF;
             font-weight: bold;
         }
 
@@ -123,18 +122,39 @@ class CampaignSeeder extends Seeder
 
         .footer .date-time {
             font-size: 1.1em;
-            color: #6c757d; /* Warna teks lebih lembut */
+            color: #6c757d;
         }
 
-        /* Styling for the date */
         .highlight-date {
             font-weight: bold;
             font-size: 1.3em;
         }
 
-        /* Adding space between elements */
         .spacer {
             margin-top: 20px;
+        }
+
+        /* Mobile Responsive Styles */
+        @media (max-width: 600px) {
+            .container {
+                margin: 20px 10px;
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .header p,
+            .footer,
+            .content h2,
+            .highlight-date {
+                font-size: 1em;
+            }
+
+            .content ul {
+                padding-left: 15px;
+            }
         }
     </style>
 </head>
@@ -143,26 +163,25 @@ class CampaignSeeder extends Seeder
     <div class="container">
         <div class="header">
             <h1>Dear Runners,</h1>
-          </div>
-           
-        
+        </div>
 
         <div class="content">
-           <p>Terima kasih telah membeli tiket <span class="highlight">SANGA SANGA RUN 2025</span>. Untuk seluruh peserta yang sudah mendaftarkan diri, dihimbau untuk mengambil <span class="highlight">race pack</span> di:</p>
-          <div class="spacer"></div>
+            <p>Terima kasih telah membeli tiket <span class="highlight">SANGA SANGA RUN 2025</span>. Untuk seluruh peserta yang sudah mendaftarkan diri, dihimbau untuk mengambil <span class="highlight">race pack</span> di:</p>
+            
+            <div class="spacer"></div>
             <h2>Lokasi Pengambilan Race Pack:</h2>
             <p class="address">
                 <strong>MANGO LANGO LAKE</strong><br>
                 Jl. Sawo Babakan Bitera, Gianyar, Bali<br>
                 <a href="https://maps.app.goo.gl/r5Wy75gYNE41Etws7" target="_blank">Klik disini untuk lokasi Google Maps</a>
             </p>
- 			<div class="spacer"></div> 
+
+            <div class="spacer"></div>
             <h2>Pada Tanggal:</h2>
             <p class="highlight-date">10-11 Mei 2025</p>
             <p class="highlight-date">11.00-19.00 WITA</p>
 
-            <div class="spacer"></div> <!-- Spacer for better spacing -->
-
+            <div class="spacer"></div>
             <h2>Mohon membaca syarat pengambilan race pack yang tertera dibawah ini:</h2>
             <ul>
                 <li>Identitas Diri: KTP/SIM/Kartu Pelajar asli atau fotokopi.</li>

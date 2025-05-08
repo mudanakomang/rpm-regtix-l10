@@ -55,7 +55,7 @@ class EmailCampaignController extends Controller
                 'subject' => $campaign->subject,
                 'sender' => ['name' => 'RegTix | '.$registration->event->name, 'email' => 'info@regtix.id'],
                 'replyTo' => ['name' => 'RegTix | '.$registration->event->name, 'email' => 'info@regtix.id'],
-                'to' => [new SendSmtpEmailTo(['email' => 'mudana907@gmail.com'])], // TODO : Ganti ini
+                'to' => [new SendSmtpEmailTo(['email' => $registration->email])], // TODO : Ganti ini
                 'htmlContent' => $campaign->html_template,
                 'params' => $params
             ]);
