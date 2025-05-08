@@ -30,7 +30,7 @@ jobs:
           /opt/alt/php82/usr/bin/php /usr/local/bin/composer2 install --no-dev --optimize-autoloader
 
           # Jalankan migrasi dan cache Laravel
-          /opt/alt/php82/usr/bin/php artisan migrate:refresh --seed
+          # /opt/alt/php82/usr/bin/php artisan migrate:refresh --seed
           /opt/alt/php82/usr/bin/php artisan config:clear
           /opt/alt/php82/usr/bin/php artisan cache:clear
           /opt/alt/php82/usr/bin/php artisan route:clear
