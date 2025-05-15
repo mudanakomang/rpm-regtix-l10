@@ -3,24 +3,27 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class TicketType extends Model
+class Category extends Model
 {
-    //
     protected $fillable = [
-        'name',
-        'price',
-        'quota',
         'event_id',
+        'name',
+        'distance'
     ];
-    public function registrations()
-    {
-        return $this->hasMany(Registration::class);
-    }
+    
     public function event()
     {
         return $this->belongsTo(Event::class);
+    }
+
+    public function ticketTypes(): BelongsToMany
+    {
+        return $this->belongsToMany(TicketType::class)
+            ->withPivot('price', 'quota', 'valid_from')
+            ->withTimestamps();
     }
 
     public function categoryTicketTypes(): HasMany

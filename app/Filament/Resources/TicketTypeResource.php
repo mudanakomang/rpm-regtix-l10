@@ -35,33 +35,10 @@ class TicketTypeResource extends Resource
     {
         return $form
             ->schema([
-                Select::make('event_id')
-                    ->label('Event') // Label untuk field
-                    ->options(Event::all()->pluck('name', 'id')) // Mengambil nama dan ID event dari model Event
-                    ->required()
-                    ->searchable() // Membolehkan pencarian event
-                    ->placeholder('Pick an Event')
-                    ->reactive(),
                 TextInput::make('name')
                     ->required()
                     ->label('Ticket Type Name')
-                    ->maxLength(255),
-                TextInput::make('price')
-                    ->required()
-                    ->label('Price')
-                    ->numeric()
-                    ->minValue(0)
-                    ->maxValue(10000000)
-                    ->mask(RawJs::make('$money($input)'))
-                    ->stripCharacters(',')
-                    ->prefix('Rp ')
-                    ->reactive(),
-                TextInput::make('quota')
-                    ->required()
-                    ->label('Quota')
-                    ->numeric()
-                    ->minValue(0)
-                    ->maxValue(10000000),
+                ->maxLength(255),
             ]);
     }
 
@@ -75,31 +52,8 @@ class TicketTypeResource extends Resource
                 TextColumn::make('name')
                     ->label('Name')
                     ->sortable()
-                    ->searchable(),
-                TextColumn::make('event.name')
-                    ->label('Event')
-                    ->sortable()
-                    ->searchable(),
-                TextColumn::make('price')
-                    ->label('Price')
-                    ->formatStateUsing(fn($state) => 'Rp ' . number_format($state, 0, ',', '.'))
-                    ->sortable()
-                    ->searchable(),
-                TextColumn::make('quota')
-                    ->label('Quota')
-                    ->sortable()
-                    ->searchable()
-                    ->sortable()
-                    ->searchable(),
-            ])
-            ->filters([
-                SelectFilter::make('event_id')
-                    ->label('Event')
-                    ->searchable()
-                    ->options(Event::all()->pluck('name', 'id'))
-                    ->placeholder('Select Event'),
-            ], layout: FiltersLayout::AboveContent)
-            ->filtersFormColumns(3)
+                ->searchable(),
+        ])
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),

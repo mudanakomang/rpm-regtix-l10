@@ -6,17 +6,26 @@ use App\Filament\Resources\EventResource\Pages;
 use App\Filament\Resources\EventResource\RelationManagers;
 use App\Models\Event;
 use Filament\Forms;
+use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Group;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Filament\Support\RawJs;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Log;
 
 class EventResource extends Resource
 {
@@ -30,27 +39,173 @@ class EventResource extends Resource
     {
         return $form
             ->schema([
+            Section::make('Event Details')
+                ->columns(2)
+                ->schema([
                 TextInput::make('name')
                     ->required()
                     ->label('Event Name')
                     ->maxLength(255),
                 DateTimePicker::make('start_date')
                     ->required()
-                    ->label('Start Date')
+                    ->label('Event Start Date')
                     ->placeholder('Select Start Date')
                     ->minDate(now()),
                 DateTimePicker::make('end_date')
                     ->required()
-                    ->label('End Date')
+                    ->label('Event End Date')
                     ->placeholder('Select End Date')
                     ->minDate(now()),
                 TextInput::make('location')
                     ->required()
                     ->label('Location')
                     ->maxLength(255),
+                TextInput::make('location_gmaps_url')
+                    ->label('Maps URL')
+                    ->maxLength(255),
+                DatePicker::make('registration_start_date')
+                    ->label('Registration Start Date')
+                    ->placeholder('Select Registration Start Date')
+                    ->minDate(now()),
+                DatePicker::make('registration_end_date')
+                    ->label('Registration End Date')
+                    ->placeholder('Select Registration End Date')
+                    ->minDate(now()),
+                Textarea::make('description')
+                    ->label('Description')
+                    ->label('Description'),
+                TextInput::make('rpc_collection_days')
+                    ->label('RPC Collection Days')
+                    ->maxLength(255),
+                TextInput::make('rpc_collection_dates')
+                    ->label('RPC Collection Dates')
+                    ->maxLength(255),
+                TextInput::make('rpc_collection_times')
+                    ->label('RPC Collection Times')
+                    ->maxLength(255),
+                TextInput::make('rpc_collection_location')
+                    ->label('RPC Collection Location')
+                    ->maxLength(255),
+                TextInput::make('rpc_collection_gmaps_url')
+                    ->label('RPC Collection Maps URL')
+                    ->maxLength(255),
+                TextInput::make('event_url')
+                    ->label('Event URL')
+                    ->maxLength(255),
+                TextInput::make('ig_url')
+                    ->label('Instagram URL')
+                    ->maxLength(255),
+                TextInput::make('fb_url')
+                    ->label('Facebook URL')
+                    ->maxLength(225),
+                TextInput::make('contact_email')
+                    ->label('Contact Email')
+                    ->email()
+                    ->maxLength(255),
+                TextInput::make('contact_phone')
+                    ->label('Contact Phone')
+                    ->tel()
+                    ->maxLength(255),
+                TextInput::make('event_owner')
+                    ->label('Event Owner')
+                    ->maxLength(255),
+                TextInput::make('event_organizer')
+                    ->label('Event Organizer')
+                    ->maxLength(255),
                 TextInput::make('code_prefix')
                     ->label('Code Prefix')
                     ->maxLength(255),
+                    FileUpload::make('event_logo')
+                        ->label('Event Logo')
+                        ->image()
+                        ->disk('public')
+                        ->directory('image/logos')
+                        ->visibility('public')
+                        ->imageEditor()
+                        ->imageEditorAspectRatios([
+                            null,
+                            '16:9',
+                            '4:3',
+                            '1:1',
+                        ]),
+                    FileUpload::make('event_banner')
+                        ->label('Event Banner')
+                        ->image()
+                        ->imageEditor()
+                        ->disk('public')
+                        ->visibility('public')
+                        ->directory('image/banner')
+                        ->imageEditorAspectRatios([
+                            null,
+                            '16:9',
+                            '4:3',
+                            '1:1',
+                        ]),
+                ])
+                ->collapsible()
+                ->collapsed(false),
+            Section::make('Event Categories')
+                ->schema([
+                    Repeater::make('categories')
+                        ->relationship()
+                        ->columns(2)
+                        ->live()
+                        ->deleteAction(
+                            fn(Action $action) => $action->requiresConfirmation()
+                        )
+                        ->schema([
+                            Group::make([
+                                TextInput::make('name')
+                                    ->required()
+                                    ->label('Category Name')
+                                    ->maxLength(255),
+                                TextInput::make('distance')
+                                    ->required()
+                                    ->numeric()
+                                    ->label('Distance')
+                                    ->step(1)
+                                    ->maxLength(255)
+                                    ->suffix('KM'),
+                            ])->columnSpan(1),
+
+                            Group::make([
+                                Repeater::make('categoryTicketTypes')
+                                    ->relationship()
+                                    ->live()
+                                    ->label('Ticket Types')
+                                    ->schema([
+                                        Select::make('ticket_type_id')
+                                            ->label('Ticket Type')
+                                            ->options(function () {
+                                                return \App\Models\TicketType::all()->pluck('name', 'id');
+                                            })
+                                            ->disableOptionsWhenSelectedInSiblingRepeaterItems()
+                                            ->required(),
+                                        TextInput::make('price')
+                                            ->required()
+                                            ->label('Price')
+                                            ->numeric()
+                                            ->minValue(0)
+                                            ->maxValue(10000000)
+                                            ->mask(RawJs::make('$money($input)'))
+                                            ->stripCharacters(',')
+                                            ->prefix('Rp ')
+                                            ->reactive(),
+                                        TextInput::make('quota')
+                                            ->numeric()
+                                            ->required(),
+                                        DatePicker::make('valid_from')
+                                            ->label('Valid From')
+                                            ->placeholder('Select Date')
+                                    ])
+                                    ->columns(1)
+                            ])
+
+                        ])
+                        ->columns(2),
+                ])
+                ->collapsible()
+                ->collapsed(true)
             ]);
     }
 

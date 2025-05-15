@@ -15,26 +15,25 @@ jobs:
     - name: Setup SSH and Deploy
       uses: appleboy/ssh-action@v0.1.10
       with:
-        host: 151.106.124.185
-        username: u246553790
+        host: 69.62.83.32
+        username: root
         key: ${{ secrets.SSH_PRIVATE_KEY }}
-        port: 65002
+        port: 22
         script: |
           # Masuk ke direktori aplikasi
-          cd /home/u246553790/domains/regtix.id/public_html/rpm
+          cd /var/www/rpm
 
           # Update code dengan git pull
           git pull origin main
 
           # Jalankan composer install
-          /opt/alt/php82/usr/bin/php /usr/local/bin/composer2 install --no-dev --optimize-autoloader
+          sudo -u www-data composer install --no-dev --optimize-autoloader
 
           # Jalankan migrasi dan cache Laravel
-          # /opt/alt/php82/usr/bin/php artisan migrate:refresh --seed
-          /opt/alt/php82/usr/bin/php artisan config:clear
-          /opt/alt/php82/usr/bin/php artisan cache:clear
-          /opt/alt/php82/usr/bin/php artisan route:clear
-          /opt/alt/php82/usr/bin/php artisan view:clear
-          /opt/alt/php82/usr/bin/php artisan optimize:clear
-          /opt/alt/php82/usr/bin/php artisan route:cache          
-
+          php artisan migrate:refresh --seed
+          php artisan config:clear
+          php artisan cache:clear
+          php artisan route:clear
+          php artisan view:clear
+          php artisan optimize:clear
+          php artisan route:cache

@@ -58,6 +58,7 @@ class Registration extends Model
         'community_name',
         'bib_name',
         'reg_id',
+        'registration_code',
         'is_validated',
         'validated_by',
         'registration_date'

@@ -33,10 +33,7 @@ class EventSeeder extends Seeder
         ];
         foreach ($ticketTypes as $type) {
             TicketType::create([
-                'event_id' => $event->id,
                 'name' => $type['name'],
-                'price' => $type['price'],
-                'quota' => $type['quota'],
             ]);
         }
     }
