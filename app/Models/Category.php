@@ -22,7 +22,7 @@ class Category extends Model
     public function ticketTypes(): BelongsToMany
     {
         return $this->belongsToMany(TicketType::class)
-            ->withPivot('price', 'quota', 'valid_from')
+            ->withPivot('id', 'price', 'quota', 'valid_from')
             ->withTimestamps();
     }
 

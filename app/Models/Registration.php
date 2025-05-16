@@ -37,7 +37,7 @@ class Registration extends Model
     ];
     //
     protected $fillable = [
-        'ticket_type_id',
+        'category_ticket_type_id',
         'full_name',
         'email',
         'phone',
@@ -64,9 +64,14 @@ class Registration extends Model
         'registration_date'
     ];
 
+    public function categoryTicketType()
+    {
+        return $this->belongsTo(CategoryTicketType::class, 'category_ticket_type_id');
+    }
+
     public function ticketType()
     {
-        return $this->belongsTo(TicketType::class);
+        return $this->hasOneThrough(TicketType::class, CategoryTicketType::class, 'id', 'id', 'category_ticket_type_id', 'ticket_type_id');
     }
     public function event()
     {

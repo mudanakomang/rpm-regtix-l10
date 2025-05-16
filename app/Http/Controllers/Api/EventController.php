@@ -13,7 +13,7 @@ class EventController extends Controller
     {
         $perPage = $request->input('per_page', 10);
 
-        $events = Event::with(['categories', 'categories.ticketTypes'])->paginate($perPage);
+        $events = Event::with(['categories', 'categories.ticketTypes', 'categories.categoryTicketTypes'])->paginate($perPage);
 
         return EventResource::collection($events);
     }

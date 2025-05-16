@@ -119,7 +119,7 @@ class EventResource extends Resource
                         ->label('Event Logo')
                         ->image()
                         ->disk('public')
-                        ->directory('image/logos')
+                    ->directory(fn($record) => "image/event/logo/{$record->id}")
                         ->visibility('public')
                         ->imageEditor()
                         ->imageEditorAspectRatios([
@@ -134,7 +134,7 @@ class EventResource extends Resource
                         ->imageEditor()
                         ->disk('public')
                         ->visibility('public')
-                        ->directory('image/banner')
+                    ->directory(fn($record) => "image/event/banner/{$record->id}")
                         ->imageEditorAspectRatios([
                             null,
                             '16:9',

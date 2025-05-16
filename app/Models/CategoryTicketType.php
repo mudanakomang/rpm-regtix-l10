@@ -30,7 +30,11 @@ class CategoryTicketType extends Pivot
 
     public function vouchers()
     {
-        return $this->hasMany(Voucher::class);
+        return $this->hasMany(Voucher::class, 'category_ticket_type_id', 'id');
     }
 
+    public function registrations()
+    {
+        return $this->hasMany(Registration::class, 'category_ticket_type_id', 'id');
+    }
 }
