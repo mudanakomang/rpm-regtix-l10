@@ -12,11 +12,16 @@ class VoucherController extends Controller
     public function checkVoucherCode(Request $request)
     {
         $request->validate([
-            'code' => 'required|string'
+            'code' => 'required|string',
+            'category_ticket_type_id' => 'required|integer|exists:category_ticket_type,id',
         ]);
+
 
         $voucherCode = VoucherCode::with(['voucher.categoryTicketType.ticketType', 'registration'])
             ->where('code', $request->code)
+            ->whereHas('voucher.categoryTicketType', function ($query) use ($request) {
+                $query->where('id', $request->category_ticket_type_id);
+            })
             ->first();
 
         if (!$voucherCode) {

@@ -15,7 +15,7 @@ class VoucherCodeCheckResource extends JsonResource
         $isUsed = (bool) $this->used;
         $priceReduction = $categoryTicketType->price * ($voucher->discount / 100);
         $finalPrice = $categoryTicketType->price - $priceReduction;
-        
+
         return [
             'code' => $this->code,
             'is_used' => $isUsed,
@@ -25,14 +25,12 @@ class VoucherCodeCheckResource extends JsonResource
                 'name' => $voucher?->name,
                 'discount' => $voucher?->discount,
             ],
-            
+
             'ticket_type' => $ticketType ? [
                 'id' => $ticketType->id,
                 'name' => $ticketType->name,
-                'pivot' => [
-                    'price' => $categoryTicketType->price,
-                    'quota' => $categoryTicketType->quota
-                ],
+                'price' => $categoryTicketType->price,
+                'quota' => $categoryTicketType->quota,
                 'final_price' => $finalPrice,
             ] : null,
             'registration' => $registration ? [
