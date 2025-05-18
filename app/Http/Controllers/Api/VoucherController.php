@@ -18,7 +18,7 @@ class VoucherController extends Controller
 
 
         $voucherCode = VoucherCode::with(['voucher.categoryTicketType.ticketType', 'registration'])
-            ->where('code', $request->code)
+            ->where(['code', $request->code, 'used' => false])
             ->whereHas('voucher.categoryTicketType', function ($query) use ($request) {
                 $query->where('id', $request->category_ticket_type_id);
             })

@@ -26,7 +26,8 @@ class CategoryTicketTypeResource extends JsonResource
             'quota'                     => $this->pivot->quota,
             'used'                      => $used,
             'remaining'                 => $this->pivot->quota - $used,
-            'valid_from'                => $this->valid_from
+            'valid_from'                => $this->valid_from,
+            'valid_until'               => $this->valid_until,
         ];
     }
 }

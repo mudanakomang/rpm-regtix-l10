@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\CategoryTicketType;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class VoucherCodeCheckResource extends JsonResource
@@ -16,6 +17,8 @@ class VoucherCodeCheckResource extends JsonResource
         $priceReduction = $categoryTicketType->price * ($voucher->discount / 100);
         $finalPrice = $categoryTicketType->price - $priceReduction;
 
+        $categoryTicketTypeWithCount = CategoryTicketType::withCount('registrations')->find($categoryTicketType->id);
+        $used = $categoryTicketTypeWithCount?->registrations_count ?? 0;
         return [
             'code' => $this->code,
             'is_used' => $isUsed,
@@ -31,6 +34,10 @@ class VoucherCodeCheckResource extends JsonResource
                 'name' => $ticketType->name,
                 'price' => $categoryTicketType->price,
                 'quota' => $categoryTicketType->quota,
+                'used' => $used,
+                'remaining' => $categoryTicketType->quota - $used,
+                'valid_from' => $categoryTicketType->valid_from,
+                'valid_until' => $categoryTicketType->valid_until,
                 'final_price' => $finalPrice,
             ] : null,
             'registration' => $registration ? [

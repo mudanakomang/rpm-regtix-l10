@@ -61,7 +61,17 @@ class Registration extends Model
         'registration_code',
         'is_validated',
         'validated_by',
-        'registration_date'
+        'registration_date',
+        'invitation_code',
+        'status',
+        'transaction_code',
+        'payment_status',
+        'payment_type',
+        'payment_method',
+        'gross_amount',
+        'paid_at',
+        'payment_token',
+        'payment_url',
     ];
 
     public function categoryTicketType()
@@ -86,5 +96,10 @@ class Registration extends Model
     public function campaigns()
     {
         return $this->belongsToMany(Campaign::class, 'campaign_registration')->withPivot('status')->withTimestamps();
+    }
+
+    public function voucherCode()
+    {
+        return $this->hasOne(VoucherCode::class, 'registration_id', 'id');
     }
 }

@@ -13,7 +13,7 @@ class Category extends Model
         'name',
         'distance'
     ];
-    
+
     public function event()
     {
         return $this->belongsTo(Event::class);
@@ -22,7 +22,7 @@ class Category extends Model
     public function ticketTypes(): BelongsToMany
     {
         return $this->belongsToMany(TicketType::class)
-            ->withPivot('id', 'price', 'quota', 'valid_from')
+            ->withPivot('id', 'price', 'quota', 'valid_from', 'valid_until')
             ->withTimestamps();
     }
 

@@ -15,7 +15,8 @@ class CategoryTicketType extends Pivot
         'ticket_type_id',
         'price',
         'quota',
-        'valid_from'
+        'valid_from',
+        'valid_until',
     ];
 
     public function category()
