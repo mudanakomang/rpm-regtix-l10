@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\CategoryTicketType;
 use App\Models\Registration;
 use App\Models\TicketType;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -15,9 +16,9 @@ class RegistrationSeeder extends Seeder
     public function run(): void
     {
 
-        $ticketTypeId = TicketType::first()->id;
+        $ticketTypeId = CategoryTicketType::first()->id;
         Registration::create([
-            'ticket_type_id' => $ticketTypeId,
+            'category_ticket_type_id' => $ticketTypeId,
             'registration_date' => now(),
             'full_name' => 'John Doe',
             'email' => 'johndoe@example.com',

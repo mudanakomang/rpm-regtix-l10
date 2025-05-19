@@ -53,20 +53,26 @@ class Event extends Model
     {
         static::created(function ($event) {
             $oldLogoPath = $event->event_logo;
-            $newLogoPath = "image/event/logo/{$event->id}/" . basename($oldLogoPath);
-
             $oldBannerPath = $event->event_banner;
-            $newBannerPath = "image/event/banner/{$event->id}/" . basename($oldBannerPath);
 
-            if (Storage::disk('public')->exists($oldLogoPath)) {
-                Storage::disk('public')->move($oldLogoPath, $newLogoPath);
-                $event->updateQuietly(['event_logo' => $newLogoPath]);
+            if (!empty($oldLogoPath) && is_string($oldLogoPath)) {
+                $newLogoPath = "image/event/logo/{$event->id}/" . basename($oldLogoPath);
+
+                if (Storage::disk('public')->exists($oldLogoPath)) {
+                    Storage::disk('public')->move($oldLogoPath, $newLogoPath);
+                    $event->updateQuietly(['event_logo' => $newLogoPath]);
+                }
             }
 
-            if (Storage::disk('public')->exists($oldBannerPath)) {
-                Storage::disk('public')->move($oldBannerPath, $newBannerPath);
-                $event->updateQuietly(['event_banner' => $newBannerPath]);
+            if (!empty($oldBannerPath) && is_string($oldBannerPath)) {
+                $newBannerPath = "image/event/banner/{$event->id}/" . basename($oldBannerPath);
+
+                if (Storage::disk('public')->exists($oldBannerPath)) {
+                    Storage::disk('public')->move($oldBannerPath, $newBannerPath);
+                    $event->updateQuietly(['event_banner' => $newBannerPath]);
+                }
             }
         });
     }
+
 }

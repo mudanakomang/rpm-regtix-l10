@@ -19,13 +19,13 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             EventSeeder::class,
             // RegistrationSeeder::class,
-            FlashSaleCSVSeeder::class,
-            EarlyBirdCSVSeeder::class,
-            InvitationCSVSeeder::class,
-            SpecialPriceCSVSeeder::class,
-            RegulerCSVSeeder::class,
-            CampaignSeeder::class,
-            SangasianCSVSeeder::class
+            // FlashSaleCSVSeeder::class,
+            // EarlyBirdCSVSeeder::class,
+            // InvitationCSVSeeder::class,
+            // SpecialPriceCSVSeeder::class,
+            // RegulerCSVSeeder::class,
+            // CampaignSeeder::class,
+            // SangasianCSVSeeder::class
             // Add other seeders here
             // Valid
         ]);
