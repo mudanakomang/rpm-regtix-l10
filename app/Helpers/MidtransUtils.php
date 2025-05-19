@@ -17,7 +17,6 @@ class MidtransUtils
         $priceReduction = $voucher ? $categoryTicketType->price * ($voucher->discount / 100) : 0;
         $finalPrice = $categoryTicketType->price - $priceReduction;
         $address = $registration->address . ', ' . $registration->district . ', ' . $registration->province;
-        dd($address);
 
         $itemDetails = [
             [
