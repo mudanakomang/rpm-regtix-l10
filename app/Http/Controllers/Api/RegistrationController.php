@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Helpers\EmailSender;
 use App\Helpers\MidtransUtils;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreRegistrationRequest;
@@ -25,8 +26,22 @@ class RegistrationController extends Controller
             $data = $request->validated();
             $event = Event::find($data['event_id']);
 
+
             if (!$event) {
                 return response()->json(['message' => 'Event not found.'], 404);
+            }
+
+            $registran = Registration::where('email', $data['email'])
+                ->where('category_ticket_type_id', $data['category_ticket_type_id'])
+                ->where('status', 'pending')
+                ->with(['categoryTicketType.ticketType', 'categoryTicketType.category', 'categoryTicketType.category.event', 'voucherCode.voucher'])
+                ->first();
+
+            if ($registran) {
+                return response()->json([
+                    'message' => 'Registration already exists.',
+                    'data' => $registran
+                ], 409);
             }
             $prefix = $event->code_prefix;
             // Generate registration ID
@@ -88,6 +103,10 @@ class RegistrationController extends Controller
 
                 $registration->update(['payment_url' => $paymment['payment_url']]);
             }
+            $email = new EmailSender();
+            $subject = '[' . $event->name . ']' . ' Pendaftaran Anda Berhasil!';
+            $template = file_get_contents(resource_path('email/templates/payment-instruction.html'));
+            $email->sendEmail($registration, $subject, $template);
             return response()->json([
                 'message' => 'Registration successful.',
                 'data' => $regData
