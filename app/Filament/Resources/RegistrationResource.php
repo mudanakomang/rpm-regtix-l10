@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Exports\RegistrationExporter;
 use App\Filament\Resources\RegistrationResource\Pages;
 use App\Helpers\CountryListHelper;
+use App\Models\CategoryTicketType;
 use App\Models\Registration;
 use App\Models\TicketType;
 
@@ -60,18 +61,15 @@ class RegistrationResource extends Resource
     {
         return $form
             ->schema([
-                Select::make('ticket_type_id')
-                    ->label('Ticket Type') // Label untuk field
-                    ->options(
-                        TicketType::with('event')->get()->mapWithKeys(function ($ticketType) {
-                            return [
-                                $ticketType->id => $ticketType->name . ' - ' . ($ticketType->event->name ?? 'No Event'),
-                            ];
-                        })->toArray()
-                    ) // Mengambil nama dan ID event dari model Event
-                    ->required()
-                    ->searchable() // Membolehkan pencarian event
-                    ->placeholder('Pick a Ticket Type'),
+            Select::make('category_ticket_type_id')
+                ->label('Event Category - Ticket Type')
+                ->relationship('categoryTicketType', 'id')
+                ->getOptionLabelFromRecordUsing(
+                    fn($record) =>
+                    $record->category->event->name . ' - ' . $record->category->name . ' - ' . $record->ticketType->name
+                )
+                ->searchable()
+                ->preload(),
                 TextInput::make('full_name')
                     ->label('Full Name')
                     ->required()
@@ -166,13 +164,8 @@ class RegistrationResource extends Resource
                 TextInput::make('bib_name')
                     ->label('BIB Name')
                     ->maxLength(255),
-                TextInput::make('reg_id')
-                    ->label('Registration ID')
-                    ->required()
-                    ->maxLength(255)
-                    ->default(fn($record) => $record ? $record->reg_id : self::calculateNextRegId())
-                    ->readOnly(fn($record) => $record && $record->exists),
-                Hidden::make('registration_date')
+
+            Hidden::make('registration_date')
                     ->default(now())
             ]);
     }
@@ -271,35 +264,33 @@ class RegistrationResource extends Resource
                     ->label('Bib Name')
                     ->sortable()
                     ->searchable(),
-                TextColumn::make('reg_id')
+            TextColumn::make('registration_code')
                     ->label('Registration ID')
                     ->sortable()
                     ->searchable(),
             ])
             ->filters([
-                Filter::make('reg_id')
+            Filter::make('registration_code')
                     ->columns(1)
                     ->label('Registration ID')
                     ->form([
-                        TextInput::make('reg_id')
+                TextInput::make('registration_code')
                             ->label('Registration ID'),
                     ])
                     ->query(function (Builder $query, array $data) {
-                        return $query->when($data['reg_id'], function ($query, $reg_id) {
-                            $query->where('reg_id', 'like', "%{$reg_id}%");
+                return $query->when($data['registration_code'], function ($query, $reg_id) {
+                    $query->where('registration_code', 'like', "%{$reg_id}%");
                         });
                     }),
-                SelectFilter::make('ticket_type_id')
-                    ->label('Ticket Type')
-                    ->columns(1)
-                    ->searchable()
-                    ->options(
-                        TicketType::with('event')->get()->mapWithKeys(function ($ticketType) {
-                            return [
-                                $ticketType->id => $ticketType->name . ' - ' . ($ticketType->event->name ?? 'No Event'),
-                            ];
-                        })->toArray()
-                    ),
+            SelectFilter::make('category_ticket_type_id')
+                ->label('Event Category - Ticket Type')
+                ->relationship('categoryTicketType', 'id')
+                ->getOptionLabelFromRecordUsing(
+                    fn($record) =>
+                    $record->category->event->name . ' - ' . $record->category->name . ' - ' . $record->ticketType->name
+                )
+                ->searchable()
+                ->preload(),
                 SelectFilter::make('is_validated')
                     ->label('Status')
                     ->columns(1)
