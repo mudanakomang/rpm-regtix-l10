@@ -33,6 +33,7 @@ class RegistrationController extends Controller
 
             $registran = Registration::where('email', $data['email'])
                 ->where('category_ticket_type_id', $data['category_ticket_type_id'])
+                ->where('id_card_number', $data['id_card_number'])
                 ->where('status', 'pending')
                 ->with(['categoryTicketType.ticketType', 'categoryTicketType.category', 'categoryTicketType.category.event', 'voucherCode.voucher'])
                 ->first();
