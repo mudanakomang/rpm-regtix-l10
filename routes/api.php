@@ -15,3 +15,5 @@ Route::get('/events', [EventController::class, 'index']);
 Route::get('/events/{id}', [EventController::class, 'show']);
 Route::post('/voucher-code/check', [VoucherController::class, 'checkVoucherCode']);
 Route::post('/register', [RegistrationController::class, 'store']);
+
+Route::post('/midtrans/payment-notification', [MidtransWebhookController::class, 'handle']);
