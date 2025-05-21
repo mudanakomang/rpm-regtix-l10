@@ -8,7 +8,9 @@ class MidtransUtils
 {
     public static function generatePaymentLink($registration, $event)
     {
-        $serverKey = env('MIDTRANS_SERVER_KEY');
+        $isProd = config('midtrans.isProduction');
+        $serverKey = $isProd ? config('midtrans.serverKeyProd') : config('midtrans.serverKeySb');
+        $apiUrl = $isProd ? config('midtrans.apiUrlProd') : config('midtrans.apiUrlSb');
         $base64Auth = base64_encode($serverKey . ':');
         $auth = 'Basic ' . $base64Auth;
 
@@ -73,7 +75,7 @@ class MidtransUtils
         ];
 
         $client = new Client();
-        $response = $client->request('POST', env('MIDTRANS_API_URL'), [
+        $response = $client->request('POST', $apiUrl, [
             'headers' => [
                 'Accept' => 'application/json',
                 'Content-Type' => 'application/json',
