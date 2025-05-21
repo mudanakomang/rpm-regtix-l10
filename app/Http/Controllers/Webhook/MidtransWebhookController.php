@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Webhook;
 
+use App\Helpers\GenerateBib;
 use App\Http\Controllers\Controller;
 use App\Models\Registration;
 use Illuminate\Http\Request;
@@ -21,7 +22,9 @@ class MidtransWebhookController extends Controller
         $orderId = $data['order_id'];
         $transactionId = $data['transaction_id'];
         $transactionStatus = $data['transaction_status'];
-        
+        $transactionTime = $data['transaction_time'] || $data['settlement_time'];
+        $paymentType = $data['payment_type'];
+
         // Remove expired registration
         if($transactionStatus === 'expire')
         {
@@ -31,13 +34,13 @@ class MidtransWebhookController extends Controller
         switch ($transactionStatus) {
             case 'capture':
             case 'settlement':
-                $this->updatePaymentStatus($orderId, $transactionId, 'paid');
+                $this->updatePaymentStatus($orderId, $transactionId, 'paid', $transactionTime, $paymentType);
                 break;
             case 'pending':
-                $this->updatePaymentStatus($orderId, $transactionId, 'pending');
+                $this->updatePaymentStatus($orderId, $transactionId, 'pending', $transactionTime, $paymentType);
                 break;
             case 'cancel':
-                $this->updatePaymentStatus($orderId, $transactionId, 'cancel');
+                $this->updatePaymentStatus($orderId, $transactionId, 'cancel', $transactionTime, $paymentType);
                 break;
         }
         Log::info($data);
@@ -56,16 +59,26 @@ class MidtransWebhookController extends Controller
         return $expected === $data['signature_key'];
     }
 
-    private function updatePaymentStatus(string $orderId, string $transactionId, string $status): void
+    private function updatePaymentStatus(string $orderId, string $transactionId, string $status, string $transactionTime, string $paymentType): void
     {
         $registration = Registration::where('registration_code', $orderId)->first();
-        
+        $regIdGenerator = new GenerateBib();
+        $regId = $regIdGenerator->generateRegId();
         if($registration){
             $registration->update([                
                 'status' => 'confirmed',
                 'payment_status' => $status,
                 'transaction_code' => $transactionId,
+                'reg_id' => $regId,
+                'paid_at' => $transactionTime,
+                'payment_type' => $paymentType
             ]);
+
+            if ($registration->voucherCode) {
+                $registration->voucherCode->update([
+                    'used' => true
+                ]);
+            }
         }
     }
 }
