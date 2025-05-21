@@ -1,6 +1,7 @@
 <?php
 
 use App\Filament\Resources\RegistrationResource\Pages\ValidateRegistration;
+use App\Http\Controllers\Webhook\MidtransWebhookController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -11,3 +12,6 @@ Route::get('/admin/registrations/{registration}/print', function ($id) {
     $registration = \App\Models\Registration::findOrFail($id);
     return view('print.registration', compact('registration'));
 })->name('registration.print');
+
+
+Route::post('/wp-json/midtrans/v1/payment-notification', [MidtransWebhookController::class, 'handle']);
