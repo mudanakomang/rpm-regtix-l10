@@ -118,4 +118,29 @@ class RegistrationController extends Controller
             ], 500);
         }
     }
+
+    public function checkRegistration(Request $request)
+    {
+        try {
+
+            $reg = Registration::where('registration_code', $request->registration_code)
+                ->with(['categoryTicketType.ticketType', 'categoryTicketType.category', 'categoryTicketType.category.event', 'voucherCode.voucher'])
+                ->first();
+
+            if (!$reg) {
+                return response()->json([
+                    'message' => 'Registration not found.'
+                ], 404);
+            }
+
+            return response()->json([
+                'message' => 'Registration found.',
+                'data' => $reg
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
 }

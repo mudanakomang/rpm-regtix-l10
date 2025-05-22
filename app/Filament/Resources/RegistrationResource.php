@@ -8,7 +8,7 @@ use App\Helpers\CountryListHelper;
 use App\Models\CategoryTicketType;
 use App\Models\Registration;
 use App\Models\TicketType;
-
+use Dom\Text;
 use Filament\Actions\Exports\Enums\Contracts\ExportFormat;
 use Filament\Tables\Actions\Action;
 use Filament\Forms\Components\DatePicker;
@@ -70,6 +70,9 @@ class RegistrationResource extends Resource
                 )
                 ->searchable()
                 ->preload(),
+            TextInput::make('registration_code')
+                ->label('Registration Code')
+                ->readOnly(),
                 TextInput::make('full_name')
                     ->label('Full Name')
                     ->required()
@@ -187,6 +190,10 @@ class RegistrationResource extends Resource
                     ->sortable()
                     ->searchable()
                     ->dateTime(),
+            TextColumn::make('registration_code')
+                ->label('Registration Code')
+                ->sortable()
+                ->searchable(),
                 TextColumn::make('full_name')
                     ->label('Full Name')
                     ->sortable()
