@@ -42,7 +42,7 @@ class MidtransUtils
             'transaction_details' => [
                 'order_id' => $registration->registration_code,
                 'gross_amount' => $finalPrice,
-                'payment_link_id' => "payment-for-" .$registration->registration_code
+                // 'payment_link_id' => "payment-for-" .$registration->registration_code
             ],
             "usage_limit" => 1,
             'customer_details' => [

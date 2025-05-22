@@ -39,9 +39,26 @@ class RegistrationController extends Controller
                 ->first();
 
             if ($registran) {
+                $data = [
+                    ...$registran->toArray(),
+                    'category_ticket_type' => [
+                        ...$registran->categoryTicketType->toArray(),
+                        'ticket_type' => [
+                            ...$registran->categoryTicketType->ticketType->toArray(),
+                        ],
+                        'category' => [
+                            ...$registran->categoryTicketType->category->toArray(),
+                            'event' => [
+                                ...$registran->categoryTicketType->category->event->toArray(),
+                                'event_logo' => asset('storage/' . $registran->categoryTicketType->category->event->event_logo),
+                                'event_banner' => asset('storage/' . $registran->categoryTicketType->category->event->event_banner)
+                            ]
+                        ]
+                    ]
+                ];
                 return response()->json([
                     'message' => 'Registration already exists.',
-                    'data' => $registran
+                    'data' => $data
                 ], 409);
             }
             $prefix = $event->code_prefix;

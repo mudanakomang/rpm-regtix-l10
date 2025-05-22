@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Registration;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class MidtransWebhookController extends Controller
 {
@@ -61,7 +62,8 @@ class MidtransWebhookController extends Controller
 
     private function updatePaymentStatus(string $orderId, string $transactionId, string $status, string $transactionTime, string $paymentType): void
     {
-        $registration = Registration::where('registration_code', $orderId)->first();
+        $originOrderId  = Str::beforeLast($orderId, '-');
+        $registration = Registration::where('registration_code', $originOrderId)->first();
         $regIdGenerator = new GenerateBib();
         $regId = $regIdGenerator->generateRegId();
         if($registration){
