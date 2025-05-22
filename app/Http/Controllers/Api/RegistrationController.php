@@ -133,9 +133,26 @@ class RegistrationController extends Controller
                 ], 404);
             }
 
+            $data = [
+                ...$reg->toArray(),
+                'category_ticket_type' => [
+                    ...$reg->categoryTicketType->toArray(),
+                    'ticket_type' => [
+                        ...$reg->categoryTicketType->ticketType->toArray(),
+                    ],
+                    'category' => [
+                        ...$reg->categoryTicketType->category->toArray(),
+                        'event' => [
+                            ...$reg->categoryTicketType->category->event->toArray(),
+                            'event_logo' => asset('storage/' . $reg->categoryTicketType->category->event->event_logo),
+                            'event_banner' => asset('storage/' . $reg->categoryTicketType->category->event->event_banner)
+                        ]
+                    ]
+                ]
+            ];
             return response()->json([
                 'message' => 'Registration found.',
-                'data' => $reg
+                'data' => $data
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
