@@ -21,27 +21,28 @@ class MidtransWebhookController extends Controller
         }
 
         $orderId = $data['order_id'];
+        $originalOrderId = Str::beforeLast($orderId, '-');
         $transactionId = $data['transaction_id'];
         $transactionStatus = $data['transaction_status'];
         $transactionTime = $data['transaction_time'] ?? $data['settlement_time'] ?? null;
         $paymentType = $data['payment_type'];
+        $grossAmount = $data['gross_amount'];
 
         // Remove expired registration
-        if($transactionStatus === 'expire')
-        {
-            Registration::where('registration_code', $orderId)->delete();
+        if($transactionStatus === 'expire') {
+            Registration::where('registration_code', $originalOrderId)->delete();
         }
 
         switch ($transactionStatus) {
             case 'capture':
             case 'settlement':
-                $this->updatePaymentStatus($orderId, $transactionId, 'paid', $transactionTime, $paymentType);
+                $this->updatePaymentStatus($originalOrderId, $transactionId, 'paid', $transactionTime, $paymentType, $grossAmount);
                 break;
             case 'pending':
-                $this->updatePaymentStatus($orderId, $transactionId, 'pending', $transactionTime, $paymentType);
+                $this->updatePaymentStatus($originalOrderId, $transactionId, 'pending', $transactionTime, $paymentType, $grossAmount);
                 break;
             case 'cancel':
-                $this->updatePaymentStatus($orderId, $transactionId, 'cancel', $transactionTime, $paymentType);
+                $this->updatePaymentStatus($originalOrderId, $transactionId, 'cancel', $transactionTime, $paymentType, $grossAmount);
                 break;
         }
         Log::info($data);
@@ -60,10 +61,9 @@ class MidtransWebhookController extends Controller
         return $expected === $data['signature_key'];
     }
 
-    private function updatePaymentStatus(string $orderId, string $transactionId, string $status, string $transactionTime, string $paymentType): void
+    private function updatePaymentStatus(string $originalOrderId, string $transactionId, string $status, string $transactionTime, string $paymentType, $grossAmount): void
     {
-        $originOrderId  = Str::beforeLast($orderId, '-');
-        $registration = Registration::where('registration_code', $originOrderId)->first();
+        $registration = Registration::where('registration_code', $originalOrderId)->first();
         $regIdGenerator = new GenerateBib();
         $regId = $regIdGenerator->generateRegId();
         if($registration){
@@ -73,7 +73,8 @@ class MidtransWebhookController extends Controller
                 'transaction_code' => $transactionId,
                 'reg_id' => $regId,
                 'paid_at' => $transactionTime,
-                'payment_type' => $paymentType
+                'payment_type' => $paymentType,
+                'gross_amount' => $grossAmount
             ]);
 
             if ($registration->voucherCode) {
