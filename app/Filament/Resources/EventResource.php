@@ -49,13 +49,11 @@ class EventResource extends Resource
                         DateTimePicker::make('start_date')
                             ->required()
                             ->label('Event Start Date')
-                            ->placeholder('Select Start Date')
-                            ->minDate(now()),
+                    ->placeholder('Select Start Date'),
                         DateTimePicker::make('end_date')
                             ->required()
                             ->label('Event End Date')
-                            ->placeholder('Select End Date')
-                            ->minDate(now()),
+                    ->placeholder('Select End Date'),
                         TextInput::make('location')
                             ->required()
                             ->label('Location')
@@ -65,12 +63,10 @@ class EventResource extends Resource
                             ->maxLength(255),
                         DatePicker::make('registration_start_date')
                             ->label('Registration Start Date')
-                            ->placeholder('Select Registration Start Date')
-                            ->minDate(now()),
+                    ->placeholder('Select Registration Start Date'),
                         DatePicker::make('registration_end_date')
                             ->label('Registration End Date')
-                            ->placeholder('Select Registration End Date')
-                            ->minDate(now()),
+                    ->placeholder('Select Registration End Date'),
                         Textarea::make('description')
                             ->label('Description')
                             ->label('Description'),
