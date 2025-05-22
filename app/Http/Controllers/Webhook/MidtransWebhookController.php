@@ -23,7 +23,7 @@ class MidtransWebhookController extends Controller
         $orderId = $data['order_id'];
         $transactionId = $data['transaction_id'];
         $transactionStatus = $data['transaction_status'];
-        $transactionTime = $data['transaction_time'] || $data['settlement_time'];
+        $transactionTime = $data['transaction_time'] ?? $data['settlement_time'] ?? null;
         $paymentType = $data['payment_type'];
 
         // Remove expired registration
