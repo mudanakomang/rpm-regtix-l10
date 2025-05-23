@@ -11,7 +11,7 @@ class QrUtils {
         $fileName = 'qrcodes/'.$registration->id. '/'.$registration->registration_code.'.png';
         $qr = QrCode::format('png')
             ->size(300)
-            ->margin(10)
+            ->margin(4)
             ->backgroundColor(255, 255, 255)
             ->generate($registration->registration_code);
 
