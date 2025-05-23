@@ -54,6 +54,12 @@ class EventResource extends Resource
                             ->required()
                             ->label('Event End Date')
                     ->placeholder('Select End Date'),
+                Select::make('status')
+                    ->label('Event Status') // Label untuk field
+                    ->options(Event::STATUS) // Mengambil nama dan ID event dari model Event
+                    ->required()
+                    ->searchable() // Membolehkan pencarian event
+                    ->placeholder('Pick a status'),
                         TextInput::make('location')
                             ->required()
                             ->label('Location')
@@ -230,6 +236,10 @@ class EventResource extends Resource
                     ->label('End Date')
                     ->searchable()
                     ->sortable(),
+            TextColumn::make('status')
+                ->label('Status')
+                ->searchable()
+                ->sortable(),
                 TextColumn::make('location')
                     ->label('Location')
                     ->searchable()

@@ -19,7 +19,11 @@ class EventController extends Controller
     }
 
     public function show($id) {
-        $event = Event::with(['categories', 'categories.ticketTypes'])->findOrFail($id);
+        if (is_numeric($id)) {
+            $event = Event::with(['categories', 'categories.ticketTypes'])->findOrFail($id);
+        } else {
+            $event = Event::with(['categories', 'categories.ticketTypes'])->where('slug', $id)->firstOrFail();
+        }
 
         return new EventResource($event);
     }

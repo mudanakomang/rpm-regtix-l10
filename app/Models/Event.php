@@ -4,9 +4,18 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+
 
 class Event extends Model
 {
+    const STATUS = [
+        'OPEN' => 'OPEN',
+        'CLOSED' => 'CLOSED',
+        'TBA' => 'TBA',
+        'TC' => 'TEMPORARY CLOSED'
+    ];
+
     public $fillable = [
         'name',
         'start_date',
@@ -31,6 +40,8 @@ class Event extends Model
         'event_organizer',
         'event_logo',
         'event_banner',
+        'slug',
+        'status'
     ];
 
 
@@ -75,4 +86,20 @@ class Event extends Model
         });
     }
 
+    protected static function boot()
+    {
+        parent::boot();
+        static::creating(function ($event) {
+            if (empty($event->slug)) {
+                $event->slug = Str::slug($event->name);
+            }
+        });
+
+        static::updating(function ($event) {
+            // hanya jika name berubah
+            if (empty($event->slug) || $event->isDirty('name')) {
+                $event->slug = Str::slug($event->name);
+            }
+        });
+    }
 }
