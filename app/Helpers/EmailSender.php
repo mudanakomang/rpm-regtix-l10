@@ -35,8 +35,14 @@ class EmailSender
 
             $params = [
                 'name' => $registration->full_name,
+                'phone' => $registration->phone,
                 'email' => $registration->email,
                 'event' => $event->name,
+                'category' => $category->name,
+                'qr_code_path' => $registration->qr_code_path,
+                'bib' => $registration->bib_name,
+                'bib_number' => $registration->reg_id,
+                'ticket' => $ticketType->name,
                 'registration_code' => $registration->registration_code,
                 'payment_url' => $registration->payment_url,
                 'date' => Carbon::parse($registration->created_at)->format('d M Y'),

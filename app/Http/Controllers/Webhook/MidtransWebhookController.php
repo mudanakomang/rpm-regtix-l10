@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\Webhook;
 
+use App\Helpers\EmailSender;
 use App\Helpers\GenerateBib;
+use App\Helpers\QrUtils;
 use App\Http\Controllers\Controller;
 use App\Models\Registration;
 use Illuminate\Http\Request;
@@ -70,6 +72,8 @@ class MidtransWebhookController extends Controller
         $regIdGenerator = new GenerateBib();
         $regId = $regIdGenerator->generateRegId($count);
         if($registration){
+            $qrGenerator = new QrUtils();
+            $qrPath = $qrGenerator->generateQr($registration);
             $registration->update([                
                 'status' => 'confirmed',
                 'payment_status' => $status,
@@ -77,9 +81,13 @@ class MidtransWebhookController extends Controller
                 'reg_id' => $regId,
                 'paid_at' => $transactionTime,
                 'payment_type' => $paymentType,
-                'gross_amount' => $grossAmount
+                'gross_amount' => $grossAmount,
+                'qr_code_path' => $qrPath,
             ]);
-
+            $emailSender = new EmailSender();
+            $subject = $registration->categoryTicketType->category->event->name . ' - Your Print-At-Home Tickets have arrived! - Do Not Reply';
+            $template = file_get_contents(resource_path('email/templates/e-ticket.html'));
+            $emailSender->sendEmail($registration, $subject, $template);
             if ($registration->voucherCode) {
                 $registration->voucherCode->update([
                     'used' => true

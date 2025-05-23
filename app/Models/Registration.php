@@ -72,6 +72,7 @@ class Registration extends Model
         'paid_at',
         'payment_token',
         'payment_url',
+        'qr_code_path'
     ];
 
     public function categoryTicketType()
