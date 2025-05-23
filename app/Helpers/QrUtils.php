@@ -9,10 +9,14 @@ class QrUtils {
     public function generateQr($registration)
     {
         $fileName = 'qrcodes/'.$registration->id. '/'.$registration->registration_code.'.png';
-        $qr = QrCode::format('png')->size(200)->generate($registration->registration_code);
+        $qr = QrCode::format('png')
+            ->size(300)
+            ->margin(10)
+            ->backgroundColor(255, 255, 255)
+            ->generate($registration->registration_code);
 
         Storage::disk('public')->put($fileName, $qr);
 
-        return Storage::url($fileName);
+        return url(Storage::url($fileName));
     }
 }
