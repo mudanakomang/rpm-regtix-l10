@@ -50,7 +50,14 @@ class VoucherCodeResource extends Resource
                 // Kolom lain yang dibutuhkan
             ])
             ->filters([
-                // Filter berdasarkan voucher_id jika ada
+            // Filter berdasarkan voucher_id jika ada
+            SelectFilter::make('voucher_id')
+                ->label('Voucher Name')
+                ->options(function () {
+                    return \App\Models\Voucher::all()->pluck('name', 'id');
+                })
+                ->searchable()
+                ->multiple(),
                
             ]);
     }

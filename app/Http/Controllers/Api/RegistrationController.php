@@ -115,15 +115,20 @@ class RegistrationController extends Controller
             $shouldPay = $finalPrice > 0;
             if ($shouldPay) {
                 $midtrans = new MidtransUtils();
-                $paymment = $midtrans->generatePaymentLink($registration, $event);
+                $paymment = $midtrans->generateSnapToken($registration);
 
-                $regData['payment_url'] = $paymment['payment_url'];
+                $regData['payment_token'] = $paymment['token'];
 
-                $registration->update(['payment_url' => $paymment['payment_url']]);
+                $registration->update(['payment_token' => $paymment['token']]);
+                $subject = '[' . $event->name . ']' . ' Pendaftaran Anda Berhasil!';
+                $template = file_get_contents(resource_path('email/templates/payment-instruction.html'));
+            } else {
+                $registration->update(['payment_status' => 'paid', 'status' => 'confirmed']);
+                $subject = $registration->categoryTicketType->category->event->name . ' - Your Print-At-Home Tickets have arrived! - Do Not Reply';
+                $template = file_get_contents(resource_path('email/templates/e-ticket.html'));
             }
+
             $email = new EmailSender();
-            $subject = '[' . $event->name . ']' . ' Pendaftaran Anda Berhasil!';
-            $template = file_get_contents(resource_path('email/templates/payment-instruction.html'));
             $email->sendEmail($registration, $subject, $template);
             return response()->json([
                 'message' => 'Registration successful.',

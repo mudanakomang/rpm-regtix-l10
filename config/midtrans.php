@@ -8,4 +8,6 @@ return [
   'serverKeyProd' => env('MIDTRANS_SERVER_KEY_PROD'),
   'apiUrlSb' => env('MIDTRANS_API_URL_SB'),
   'apiUrlProd' => env('MIDTRANS_API_URL_PROD'),
+  'snapApiUrlSb' => env('MIDTRANS_SNAP_API_URL_SB'),
+  'snapApiUrlProd' => env('MIDTRANS_SNAP_API_URL_PROD'),
 ];

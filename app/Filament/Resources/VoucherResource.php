@@ -72,7 +72,9 @@ class VoucherResource extends Resource
             ->actions([
             Action::make('viewCodes')
                 ->label('View Codes')
-                ->url(fn($record) => VoucherCodeResource::getUrl('index', ['voucher_id' => $record->id]))
+                ->url(fn($record) => VoucherCodeResource::getUrl('index', [
+                    'tableFilters[voucher_id][values][0]' => $record->id,
+                ]))
                 ->icon('heroicon-o-eye'),
             // Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
