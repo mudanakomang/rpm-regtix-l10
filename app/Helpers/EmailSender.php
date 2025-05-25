@@ -51,7 +51,7 @@ class EmailSender
                 'price' => $this->formatMoney($price),
                 'price_reduction' => '- '.$this->formatMoney($priceReduction),
                 'final_price' => $this->formatMoney($finalPrice),
-                'voucher' => $voucher ? 'Voucher : ' . $voucherCode->code : 'No Voucher',
+                'voucher' => $voucher ? $voucherCode->code : 'No Voucher',
                 'year' => Carbon::now()->year
             ];
             $sendSmtpEmail = new SendSmtpEmail([
