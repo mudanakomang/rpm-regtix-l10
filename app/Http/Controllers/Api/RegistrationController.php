@@ -126,6 +126,11 @@ class RegistrationController extends Controller
                 $registration->update(['payment_status' => 'paid', 'status' => 'confirmed']);
                 $subject = $registration->categoryTicketType->category->event->name . ' - Your Print-At-Home Tickets have arrived! - Do Not Reply';
                 $template = file_get_contents(resource_path('email/templates/e-ticket.html'));
+                if ($registration->voucherCode) {
+                    $registration->voucherCode->update([
+                        'used' => true
+                    ]);
+                }
             }
 
             $email = new EmailSender();
