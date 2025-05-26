@@ -38,6 +38,10 @@ class EmailSender
                 'phone' => $registration->phone,
                 'email' => $registration->email,
                 'event' => $event->name,
+                'location' => $event->location,
+                'date' => Carbon::parse($event->start_date)->format('d M Y H:i'),
+                'rpc_location' => $event->rpc_collection_location,
+                'rpc_date' => $event->rpc_collection_days . ' ' . $event->rpc_collection_dates . ' ' . $event->rpc_collection_times,
                 'category' => $category->name,
                 'qr_code_path' => $registration->qr_code_path,
                 'bib' => $registration->bib_name,
@@ -51,13 +55,13 @@ class EmailSender
                 'price' => $this->formatMoney($price),
                 'price_reduction' => '- '.$this->formatMoney($priceReduction),
                 'final_price' => $this->formatMoney($finalPrice),
-                'voucher' => $voucher ? 'Voucher : ' . $voucherCode->code : 'No Voucher',
+                'voucher' => $voucher ? $voucherCode->code : 'No Voucher',
                 'year' => Carbon::now()->year
             ];
             $sendSmtpEmail = new SendSmtpEmail([
                 'subject' => $subject,
-                'sender' => ['name' => 'RegTix | ' . $event->name, 'email' => 'info@regtix.id'],
-                'replyTo' => ['name' => 'RegTix | ' . $event->name, 'email' => 'info@regtix.id'],
+                'sender' => ['name' => 'RegTix | ' . $event->name, 'email' => env('MAIL_SENDER')],
+                'replyTo' => ['name' => 'RegTix | ' . $event->name, 'email' => env('MAIL_REPLY_TO')],
                 'to' => [new SendSmtpEmailTo(['email' => $registration->email])], 
                 'htmlContent' => $template,
                 'params' => $params

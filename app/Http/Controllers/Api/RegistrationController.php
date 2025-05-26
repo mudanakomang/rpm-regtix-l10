@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Helpers\EmailSender;
+use App\Helpers\GenerateBib;
 use App\Helpers\MidtransUtils;
+use App\Helpers\QrUtils;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreRegistrationRequest;
 use App\Http\Resources\RegistrationResource;
@@ -120,10 +122,35 @@ class RegistrationController extends Controller
                 $regData['payment_url'] = $paymment['payment_url'];
 
                 $registration->update(['payment_url' => $paymment['payment_url']]);
+                $template = file_get_contents(resource_path('email/templates/payment-instruction.html'));
+                $subject = '[' . $event->name . ']' . ' Pendaftaran Anda Berhasil! - Do Not Reply';
+            } else {
+                $subject = $registration->categoryTicketType->category->event->name . ' - Your Print-At-Home Tickets have arrived! - Do Not Reply';
+                $template = file_get_contents(resource_path('email/templates/e-ticket.html'));
+                $count = Registration::where('category_ticket_type_id', $registration->category_ticket_type_id)
+                    ->where('status', 'confirmed')
+                    ->count();
+                $regIdGenerator = new GenerateBib();
+                $qrGenerator = new QrUtils();
+                $regId = $regIdGenerator->generateRegId($count);
+                $qrPath = $qrGenerator->generateQr($registration);
+                $registration->update([
+                    'status' => 'confirmed',
+                    'payment_status' => 'paid',
+                    'reg_id' => $regId,
+                    'paid_at' => Carbon::now()->format('Y-m-d H:i:s'),
+                    'payment_type' => Carbon::now()->format('Y-m-d H:i:s'),
+                    'gross_amount' => 0,
+                    'qr_code_path' => $qrPath,
+                ]);
+
+                if ($registration->voucherCode) {
+                    $registration->voucherCode->update([
+                        'used' => true
+                    ]);
+                }
             }
             $email = new EmailSender();
-            $subject = '[' . $event->name . ']' . ' Pendaftaran Anda Berhasil!';
-            $template = file_get_contents(resource_path('email/templates/payment-instruction.html'));
             $email->sendEmail($registration, $subject, $template);
             return response()->json([
                 'message' => 'Registration successful.',

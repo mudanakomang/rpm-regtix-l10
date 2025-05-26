@@ -27,8 +27,8 @@
         }
 
         .highlight-box {
-            background-color: #e0f2fe;
-            border-left: 5px solid #0ea5e9;
+            background-color: #A399FF;
+            border-left: 5px solid #4633FF;
             padding: 16px;
             border-radius: 8px;
             margin: 20px 0;
@@ -92,8 +92,8 @@
             }
 
             .qr-code img {
-                width: 150px;
-                height: 150px;
+                width: 200px;
+                height: 200px;
             }
         }
     </style>
@@ -102,7 +102,7 @@
 <body>
     <div class="container">
         <img src="https://rpm.regtix.id/images/logo.png" alt="RegTix logo" width="120" style="margin-bottom: 20px;" />
-
+        <hr>
         <h2>Halo {{ params.name }},</h2>
         <p>Terima kasih! Berikut adalah e-tiket Anda untuk acara <strong>{{ params.event }}</strong>.</p>
 
@@ -117,57 +117,79 @@
                 style="max-width: 100%; height: auto; display: block; margin: 0 auto;" />
         </div>
 
+        <h3>Event</h3>
+        <table style="width: 100%; border-collapse: collapse; margin-top: 30px;">
+            <tbody>
+                <tr>
+                    <td style="padding: 4px; font-weight: bold;">Lokasi</td>
+                    <td style="padding: 4px;">{{ params.location }}</td>
+                </tr>
+                <tr>
+                    <td style="padding: 4px; font-weight: bold;">Waktu</td>
+                    <td style="padding: 4px;">{{ params.date }}</td>
+                </tr>
+                <tr>
+                    <td style="padding: 4px; font-weight: bold;">Lokasi RPC</td>
+                    <td style="padding: 4px;">{{ params.rpc_location }}</td>
+                </tr>
+                <tr>
+                    <td style="padding: 4px; font-weight: bold;">Waktu RPC</td>
+                    <td style="padding: 4px;">{{ params.rpc_date }}</td>
+                </tr>
+            </tbody>
+        </table>
+        <hr>
         <h3>Rincian Tiket</h3>
         <table style="width: 100%; border-collapse: collapse; margin-top: 30px;">
             <tbody>
                 <tr>
-                    <td style="padding: 8px; font-weight: bold;">Nama</td>
-                    <td style="padding: 8px;">{{ params.name }}</td>
+                    <td style="padding: 4px; font-weight: bold;">Nama</td>
+                    <td style="padding: 4px;">{{ params.name }}</td>
                 </tr>
                 <tr>
-                    <td style="padding: 8px; font-weight: bold;">Nomor HP</td>
-                    <td style="padding: 8px;">{{ params.phone }}</td>
+                    <td style="padding: 4px; font-weight: bold;">Nomor HP</td>
+                    <td style="padding: 4px;">{{ params.phone }}</td>
                 </tr>
                 <tr>
-                    <td style="padding: 8px; font-weight: bold;">Email</td>
-                    <td style="padding: 8px;">{{ params.email }}</td>
+                    <td style="padding: 4px; font-weight: bold;">Email</td>
+                    <td style="padding: 4px;">{{ params.email }}</td>
                 </tr>
                 <tr>
-                    <td style="padding: 8px; font-weight: bold;">Event</td>
-                    <td style="padding: 8px;">{{ params.event }}</td>
+                    <td style="padding: 4px; font-weight: bold;">Event</td>
+                    <td style="padding: 4px;">{{ params.event }}</td>
                 </tr>
                 <tr>
-                    <td style="padding: 8px; font-weight: bold;">Kategori</td>
-                    <td style="padding: 8px;">{{ params.category }}</td>
+                    <td style="padding: 4px; font-weight: bold;">Kategori</td>
+                    <td style="padding: 4px;">{{ params.category }}</td>
                 </tr>
                 <tr>
-                    <td style="padding: 8px; font-weight: bold;">Tiket</td>
-                    <td style="padding: 8px;">{{ params.ticket }}</td>
+                    <td style="padding: 4px; font-weight: bold;">Tiket</td>
+                    <td style="padding: 4px;">{{ params.ticket }}</td>
                 </tr>
                 <tr>
-                    <td style="padding: 8px; font-weight: bold;">Harga</td>
-                    <td style="padding: 8px;">{{ params.price }}</td>
-                </tr>
-
-
-                <tr>
-                    <td style="padding: 8px; font-weight: bold;">Voucher</td>
-                    <td style="padding: 8px;">{{ params.voucher }} </td>
+                    <td style="padding: 4px; font-weight: bold;">Harga</td>
+                    <td style="padding: 4px;">{{ params.price }}</td>
                 </tr>
 
+
                 <tr>
-                    <td style="padding: 8px; font-weight: bold;">BIB</td>
-                    <td style="padding: 8px;">{{ params.bib }}</td>
+                    <td style="padding: 4px; font-weight: bold;">Voucher</td>
+                    <td style="padding: 4px;">{{ params.voucher }} </td>
                 </tr>
 
                 <tr>
-                    <td style="padding: 8px; font-weight: bold;">Nomor BIB</td>
-                    <td style="padding: 8px;">{{ params.bib_number }}</td>
+                    <td style="padding: 4px; font-weight: bold;">BIB</td>
+                    <td style="padding: 4px;">{{ params.bib }}</td>
                 </tr>
 
                 <tr>
-                    <td style="padding: 8px; font-weight: bold;">Total Bayar</td>
-                    <td style="padding: 8px;">{{ params.final_price }}</td>
+                    <td style="padding: 4px; font-weight: bold;">Nomor BIB</td>
+                    <td style="padding: 4px;">{{ params.bib_number }}</td>
+                </tr>
+
+                <tr>
+                    <td style="padding: 4px; font-weight: bold;">Total Bayar</td>
+                    <td style="padding: 4px;">{{ params.final_price }}</td>
                 </tr>
             </tbody>
         </table>
