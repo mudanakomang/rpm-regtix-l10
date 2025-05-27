@@ -6,6 +6,7 @@ use App\Filament\Exports\RegistrationExporter;
 use App\Filament\Resources\RegistrationResource\Pages;
 use App\Helpers\CountryListHelper;
 use App\Models\CategoryTicketType;
+use App\Models\Event;
 use App\Models\Registration;
 use App\Models\TicketType;
 use Dom\Text;
@@ -289,15 +290,37 @@ class RegistrationResource extends Resource
                     $query->where('registration_code', 'like', "%{$reg_id}%");
                         });
                     }),
+            SelectFilter::make('event_id')
+                ->label('Event')
+                ->options(
+                    Event::pluck('name', 'id')->toArray()
+                )
+                ->query(function ($query, $state) {
+                    $query->when($state['value'] != null, function ($query) use ($state) {
+                        $query->whereHas('categoryTicketType.category.event', function ($q) use ($state) {
+                            $q->where('id', $state);
+                        });
+                    });
+                }),
             SelectFilter::make('category_ticket_type_id')
                 ->label('Event Category - Ticket Type')
-                ->relationship('categoryTicketType', 'id')
-                ->getOptionLabelFromRecordUsing(
-                    fn($record) =>
-                    $record->category->event->name . ' - ' . $record->category->name . ' - ' . $record->ticketType->name
-                )
-                ->searchable()
-                ->preload(),
+                ->options(function () {
+                    $eventId = request('tableFilters')['event_id']['value'] ?? null;
+
+                    $query = CategoryTicketType::query()->with(['category.event', 'ticketType']);
+                    if ($eventId) {
+                        $query->whereHas('category.event', function ($q) use ($eventId) {
+                            $q->where('id', $eventId);
+                        });
+                    }
+
+                    return $query->get()->mapWithKeys(function ($record) {
+                        return [
+                            $record->id =>
+                            $record->category->name . ' - ' . $record->ticketType->name,
+                        ];
+                    })->toArray();
+                }),
                 SelectFilter::make('is_validated')
                     ->label('Status')
                     ->columns(1)

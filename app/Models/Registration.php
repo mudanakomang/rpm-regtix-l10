@@ -80,6 +80,16 @@ class Registration extends Model
         return $this->belongsTo(CategoryTicketType::class, 'category_ticket_type_id');
     }
 
+    public function getEventAttribute()
+    {
+        return $this->categoryTicketType?->category?->event;
+    }
+
+    public function getEventNameAttribute()
+    {
+        return $this->categoryTicketType?->category?->event?->name;
+    }
+
     public function ticketType()
     {
         return $this->hasOneThrough(TicketType::class, CategoryTicketType::class, 'id', 'id', 'category_ticket_type_id', 'ticket_type_id');
