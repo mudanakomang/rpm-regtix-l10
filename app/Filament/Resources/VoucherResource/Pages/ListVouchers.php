@@ -7,6 +7,7 @@ use App\Models\Voucher;
 use Filament\Actions;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Resources\Pages\ListRecords;
+use Illuminate\Support\Facades\Auth;
 
 class ListVouchers extends ListRecords
 {
@@ -21,6 +22,16 @@ class ListVouchers extends ListRecords
 
     public function getTableQuery(): Builder
     {
-        return Voucher::query()->withCount('voucherCodes');
+        $user = Auth::user();
+
+        if ($user->role->name === 'admin') {
+            return Voucher::query()->withCount('voucherCodes');
+        }
+
+        return Voucher::query()
+            ->withCount('voucherCodes')
+            ->whereHas('categoryTicketType.category.event', function ($query) use ($user) {
+                $query->where('id', $user->event_id);
+            });
     }
 }

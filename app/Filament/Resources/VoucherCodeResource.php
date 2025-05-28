@@ -15,6 +15,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Auth;
 
 class VoucherCodeResource extends Resource
 {
@@ -69,5 +70,18 @@ class VoucherCodeResource extends Resource
             'create' => Pages\CreateVoucherCode::route('/create'),
             // 'edit' => Pages\EditVoucherCode::route('/{record}/edit'),
         ];
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        $user = Auth::user();
+
+        if ($user->role->name === 'admin') {
+            return parent::getEloquentQuery();
+        }
+        return parent::getEloquentQuery()
+            ->whereHas('voucher.categoryTicketType.category.event', function ($query) use ($user) {
+                $query->where('id', $user->event_id);
+            });
     }
 }

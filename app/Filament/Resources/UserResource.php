@@ -4,11 +4,13 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
+use App\Models\Event;
 use App\Models\Role;
 use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Radio;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -57,6 +59,11 @@ class UserResource extends Resource
                     ->label('Role')
                     ->options(Role::pluck('label', 'id')->toArray())  // Mengambil semua role
                     ->required(),
+            Select::make('event_id')
+                ->label('Event')
+                ->options(Event::pluck('name', 'id'))
+                ->searchable()
+                ->required(),
             ]);
     }
 
@@ -81,6 +88,10 @@ class UserResource extends Resource
                     ->dateTime()
                     ->sortable()
                     ->searchable(),
+            TextColumn::make('event.name')
+                ->label('Event')
+                ->sortable()
+                ->searchable(),
             ])
             ->filters([
                 //

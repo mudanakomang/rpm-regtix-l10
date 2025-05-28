@@ -22,6 +22,7 @@ class User extends Authenticatable
         'email',
         'password',
         'role_id',
+        'event_id',
     ];
 
     /**
@@ -55,5 +56,10 @@ class User extends Authenticatable
     public function validatedRegistrations()
     {
         return $this->hasMany(Registration::class, 'validated_by');
+    }
+
+    public function event()
+    {
+        return $this->belongsTo(Event::class);
     }
 }

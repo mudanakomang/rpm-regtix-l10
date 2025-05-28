@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\VoucherResource\Pages;
 use App\Filament\Resources\VoucherResource\RelationManagers;
+use App\Models\CategoryTicketType;
 use App\Models\Voucher;
 use Filament\Tables\Actions\Action;
 use Filament\Forms;
@@ -17,6 +18,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
@@ -39,10 +41,29 @@ class VoucherResource extends Resource
             Select::make('category_ticket_type_id')
                 ->label('Event Category - Ticket Type')
                 ->relationship('categoryTicketType', 'id')
-                ->getOptionLabelFromRecordUsing(
-                    fn($record) =>
-                    $record->category->event->name . ' - ' . $record->category->name . ' - ' . $record->ticketType->name
-                )
+                ->options(function () {
+                    $user = Auth::user();
+
+                    $query = CategoryTicketType::query();
+
+                    if ($user->role->name !== 'admin') {
+                        $query->whereHas('category.event', function ($query) use ($user) {
+                            $query->where('id', $user->event_id);
+                        });
+                    }
+
+                    return $query->with(['category.event', 'ticketType'])
+                        ->get()
+                        ->mapWithKeys(function ($record) {
+                            return [
+                                $record->id =>
+                                $record->category->event->name . ' - ' .
+                                    $record->category->name . ' - ' .
+                                    $record->ticketType->name,
+                            ];
+                        })
+                        ->toArray();
+                })
                 ->searchable()
                 ->preload()
                 ->required(),
@@ -114,5 +135,22 @@ class VoucherResource extends Resource
             'create' => Pages\CreateVoucher::route('/create'),
             'edit' => Pages\EditVoucher::route('/{record}/edit'),
         ];
+    }
+
+
+    public static function getEloquentQuery(): Builder
+    {
+        $user = Auth::user();
+
+        // Admin lihat semua
+        if ($user->role->name === 'admin') {
+            return parent::getEloquentQuery();
+        }
+
+        // User biasa filter voucher berdasarkan event_id user
+        return parent::getEloquentQuery()
+            ->whereHas('categoryTicketType.category.event', function ($query) use ($user) {
+                $query->where('id', $user->event_id);
+            });
     }
 }

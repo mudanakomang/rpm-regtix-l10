@@ -29,7 +29,7 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-
+use Illuminate\Support\Facades\Auth;
 
 class RegistrationResource extends Resource
 {
@@ -292,9 +292,13 @@ class RegistrationResource extends Resource
                     }),
             SelectFilter::make('event_id')
                 ->label('Event')
-                ->options(
-                    Event::pluck('name', 'id')->toArray()
-                )
+                ->options(function () {
+                    $query = Event::query();
+                    if (Auth::user()->role->name !== 'admin') {
+                        $query->where('id', Auth::user()->event_id);
+                    }
+                    return $query->pluck('name', 'id')->toArray();
+                })
                 ->query(function ($query, $state) {
                     $query->when($state['value'] != null, function ($query) use ($state) {
                         $query->whereHas('categoryTicketType.category.event', function ($q) use ($state) {
@@ -313,11 +317,17 @@ class RegistrationResource extends Resource
                             $q->where('id', $eventId);
                         });
                     }
+                if (Auth::user()->role->name !== 'admin') {
+                    $query->whereHas('category.event', function ($q) {
+                        $q->where('id', Auth::user()->event_id);
+                    });
+                }
 
-                    return $query->get()->mapWithKeys(function ($record) {
+
+                return $query->get()->mapWithKeys(function ($record) {
                         return [
                             $record->id =>
-                            $record->category->name . ' - ' . $record->ticketType->name,
+                        $record->category->event->name . ' - ' . $record->category->name . ' - ' . $record->ticketType->name,
                         ];
                     })->toArray();
                 }),
@@ -403,5 +413,20 @@ class RegistrationResource extends Resource
             'edit' => Pages\EditRegistration::route('/{record}/edit'),
             'view' => Pages\ViewRegistration::route('/{record}'),
         ];
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        $user = Auth::user();
+
+        // Admin bisa lihat semua
+        if ($user->role->name === 'admin') {
+            return parent::getEloquentQuery();
+        }
+
+        // User biasa hanya lihat event tertentu
+        return parent::getEloquentQuery()->whereHas('categoryTicketType.category.event', function ($query) use ($user) {
+            $query->where('id', $user->event_id);
+        });
     }
 }

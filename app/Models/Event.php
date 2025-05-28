@@ -60,6 +60,11 @@ class Event extends Model
         return $this->hasMany(Category::class);
     }
 
+    public function users()
+    {
+        return $this->hasMany(User::class);
+    }
+
     protected static function booted()
     {
         static::created(function ($event) {
