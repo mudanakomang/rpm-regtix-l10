@@ -184,7 +184,16 @@
           </tr>
           <tr><td class="label">RPC End Date</td><td>{{ params.rpc_end_date }}</td></tr>
           <tr><td class="label">RPC Times</td><td>{{ params.rpc_times }}</td></tr>
-          <tr><td class="label">RPC Location</td><td><a href="{{ params.rpc_location }}">Google Map Link</a></td></tr>
+          <tr>
+            <td class="label">RPC Location</td>
+            <td>
+              {% if params.rpc_location_url %}
+              <a href="{{ params.rpc_location_url }}">{{ params.rpc_location }}</a>
+              {% else %}
+              {{ params.rpc_location }}
+              {% endif %}
+            </td>
+          </tr>
         </table>
       </div>
 

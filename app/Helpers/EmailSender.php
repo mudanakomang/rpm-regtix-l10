@@ -46,6 +46,7 @@ class EmailSender
                 'location' => $event->location,
                 'date' => Carbon::parse($event->start_date)->format('d M Y H:i'),
                 'rpc_location' => $event->rpc_collection_location,
+                'rpc_location_url' => $event->rpc_collection_gmaps_url,
                 'category' => $category->name,
                 'qr_code_path' => $registration->qr_code_path,
                 'bib' => $registration->bib_name,
