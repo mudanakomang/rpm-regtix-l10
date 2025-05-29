@@ -1,208 +1,203 @@
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>E-Tiket Anda</title>
-    <style>
-        body {
-            margin: 0;
-            font-family: 'Segoe UI', Roboto, sans-serif;
-            background-color: #f5f5f5;
-            padding: 10px;
-        }
-
-        .container {
-            max-width: 600px;
-            margin: auto;
-            background-color: #ffffff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        h2 {
-            color: #333;
-        }
-
-        .highlight-box {
-            background-color: #A399FF;
-            border-left: 5px solid #4633FF;
-            padding: 16px;
-            border-radius: 8px;
-            margin: 20px 0;
-        }
-
-        .qr-code {
-            text-align: center;
-            margin: 30px 0;
-        }
-
-        .qr-code img {
-            width: 200px;
-            height: 200px;
-        }
-
-        .table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 16px;
-            font-size: 14px;
-        }
-
-        .table th,
-        .table td {
-            border: 1px solid #e5e7eb;
-            padding: 12px;
-            text-align: left;
-        }
-
-        .table th {
-            background-color: #f3f4f6;
-            font-weight: 600;
-        }
-
-        .footer {
-            background: #f1f5f9;
-            padding: 20px;
-            text-align: center;
-            font-size: 13px;
-            color: #64748b;
-            margin-top: 30px;
-        }
-
-        @media only screen and (max-width: 600px) {
-            body {
-                padding: 5px;
-            }
-
-            .container {
-                padding: 16px;
-            }
-
-            .table th,
-            .table td {
-                padding: 10px;
-                font-size: 13px;
-            }
-
-            h2 {
-                font-size: 20px;
-            }
-
-            .qr-code img {
-                width: 200px;
-                height: 200px;
-            }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>regTix - eTicket</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background-color: #f4f7fa;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+    .email-container {
+      max-width: 600px;
+      margin: auto;
+      background-color: #ffffff;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+    .email-header {
+      background-color: #031329;
+      color: #ffffff;
+      text-align: center;
+      padding: 20px;
+    }
+    .email-header img {
+      width: 120px;
+      margin-bottom: -10px;
+    }
+    .email-body {
+      padding: 24px 32px;
+    }
+    .title {
+      text-align: center;
+      font-size: 30px;
+      color: #004aad;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .info {
+      font-size: 14px;
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+    .highlight {
+      color: #004aad;
+      font-size: 18px;
+      font-weight: bold;
+    }
+    .section-divider {
+      border-top: 1px solid #dbe3ec;
+      margin: 20px 0;
+    }
+    .details-table {
+      width: 100%;
+      font-size: 14px;
+      border-collapse: collapse;
+    }
+    .details-table td {
+      padding: 6px 0;
+      vertical-align: top;
+    }
+    .details-table td.label {
+      font-weight: bold;
+      color: #004aad;
+      width: 40%;
+    }
+    .ticket-summary,
+    .ticket-details,
+    .rpc-details {
+      margin-bottom: 20px;
+    }
+    .summary-box {
+      width: 100%;
+      font-size: 14px;
+      color: #1976d2;
+      font-family: sans-serif;
+    }
+    .summary-box td {
+      padding: 3px 0;
+    }
+    .summary-box td:last-child {
+      text-align: right;
+    }
+    .center {
+      text-align: center;
+    }
+    .label-title {
+      font-size: 14px;
+      color: #1976d2;
+      margin-bottom: 4px;
+      font-weight: 500;
+    }
+    .label-price {
+      font-size: 28px;
+      color: #1976d2;
+      font-weight: bold;
+    }
+    .qr-code {
+      text-align: center;
+      margin-top: 30px;
+    }
+    .qr-code img {
+      width: 160px;
+      height: auto;
+      border: 8px solid #f0f4f8;
+      border-radius: 8px;
+    }
+    .email-footer {
+      background-color: #f0f4f8;
+      text-align: center;
+      font-size: 12px;
+      color: #777;
+      padding: 16px;
+    }
+    @media only screen and (max-width: 600px) {
+      .email-body {
+        padding: 20px;
+      }
+    }
+  </style>
 </head>
-
 <body>
-    <div class="container">
-        <img src="https://rpm.regtix.id/images/logo.png" alt="RegTix logo" width="120" style="margin-bottom: 20px;" />
-        <hr>
-        <h2>Halo {{ params.name }},</h2>
-        <p>Terima kasih! Berikut adalah e-tiket Anda untuk acara <strong>{{ params.event }}</strong>.</p>
-
-        <div class="highlight-box" style="text-align: center;">
-            Kode Registrasi Anda:<br />
-            <strong>{{ params.registration_code }}</strong>
-        </div>
-
-        <div class="qr-code">
-            <p>Silakan tunjukkan QR Code ini saat registrasi di lokasi acara:</p>
-            <img src="{{ params.qr_code_path }}" alt="QR Code Tiket"
-                style="max-width: 100%; height: auto; display: block; margin: 0 auto;" />
-        </div>
-
-        <h3>Event</h3>
-        <table style="width: 100%; border-collapse: collapse; margin-top: 30px;">
-            <tbody>
-                <tr>
-                    <td style="padding: 4px; font-weight: bold;">Lokasi</td>
-                    <td style="padding: 4px;">{{ params.location }}</td>
-                </tr>
-                <tr>
-                    <td style="padding: 4px; font-weight: bold;">Waktu</td>
-                    <td style="padding: 4px;">{{ params.date }}</td>
-                </tr>
-                <tr>
-                    <td style="padding: 4px; font-weight: bold;">Lokasi RPC</td>
-                    <td style="padding: 4px;">{{ params.rpc_location }}</td>
-                </tr>
-                <tr>
-                    <td style="padding: 4px; font-weight: bold;">Waktu RPC</td>
-                    <td style="padding: 4px;">{{ params.rpc_date }}</td>
-                </tr>
-            </tbody>
-        </table>
-        <hr>
-        <h3>Rincian Tiket</h3>
-        <table style="width: 100%; border-collapse: collapse; margin-top: 30px;">
-            <tbody>
-                <tr>
-                    <td style="padding: 4px; font-weight: bold;">Nama</td>
-                    <td style="padding: 4px;">{{ params.name }}</td>
-                </tr>
-                <tr>
-                    <td style="padding: 4px; font-weight: bold;">Nomor HP</td>
-                    <td style="padding: 4px;">{{ params.phone }}</td>
-                </tr>
-                <tr>
-                    <td style="padding: 4px; font-weight: bold;">Email</td>
-                    <td style="padding: 4px;">{{ params.email }}</td>
-                </tr>
-                <tr>
-                    <td style="padding: 4px; font-weight: bold;">Event</td>
-                    <td style="padding: 4px;">{{ params.event }}</td>
-                </tr>
-                <tr>
-                    <td style="padding: 4px; font-weight: bold;">Kategori</td>
-                    <td style="padding: 4px;">{{ params.category }}</td>
-                </tr>
-                <tr>
-                    <td style="padding: 4px; font-weight: bold;">Tiket</td>
-                    <td style="padding: 4px;">{{ params.ticket }}</td>
-                </tr>
-                <tr>
-                    <td style="padding: 4px; font-weight: bold;">Harga</td>
-                    <td style="padding: 4px;">{{ params.price }}</td>
-                </tr>
-
-
-                <tr>
-                    <td style="padding: 4px; font-weight: bold;">Voucher</td>
-                    <td style="padding: 4px;">{{ params.voucher }} </td>
-                </tr>
-
-                <tr>
-                    <td style="padding: 4px; font-weight: bold;">BIB</td>
-                    <td style="padding: 4px;">{{ params.bib }}</td>
-                </tr>
-
-                <tr>
-                    <td style="padding: 4px; font-weight: bold;">Nomor BIB</td>
-                    <td style="padding: 4px;">{{ params.bib_number }}</td>
-                </tr>
-
-                <tr>
-                    <td style="padding: 4px; font-weight: bold;">Total Bayar</td>
-                    <td style="padding: 4px;">{{ params.final_price }}</td>
-                </tr>
-            </tbody>
-        </table>
-
-
-
-
-        <p>Jika Anda memiliki pertanyaan, silakan hubungi tim kami melalui email atau WhatsApp.</p>
-
-        <div class="footer">
-            &copy; {{ params.year }} regTIX. All rights reserved.
-        </div>
+  <div class="email-container">
+    <div class="email-header">
+      <img src="https://rpm.regtix.id/images/logo.png" alt="RegTix logo" />
     </div>
-</body>
 
+    <div class="email-body">
+      <div class="title">{{ params.event }}</div>
+
+      <div class="center">
+        <div class="info"><strong>Tanggal:</strong> {{ params.date }}</div>
+        <div class="label-title">Total Pembayaran</div>
+        <div class="label-price">{{ params.final_price }}</div>
+      </div>
+
+      <div class="ticket-summary">
+        <table class="summary-box">
+          <tr>
+            <td>Status Transaksi</td>
+            <td>{{ params.transaction_status }}</td>
+          </tr>
+          <tr>
+            <td>Metode Pembayaran</td>
+            <td>{{ params.payment_method }}</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="section-divider"></div>
+
+      <div class="info">
+        Hi {{ params.name }},<br><br>
+        Terima kasih, pembayaran anda sudah diterima.<br>
+        Silakan lihat detail anda di bawah ini:
+      </div>
+
+      <div class="ticket-details">
+        <p class="highlight">Ticket Holder</p>
+        <table class="details-table">
+          <tr><td class="label">Nama</td><td>{{ params.name }}</td></tr>
+          <tr><td class="label">ID No</td><td>{{ params.identity_id }}</td></tr>
+          <tr><td class="label">Gender</td><td>{{ params.gender }}</td></tr>
+          <tr><td class="label">Telp.</td><td>{{ params.phone }}</td></tr>
+          <tr><td class="label">Category Ticket</td><td>{{ params.ticket }} - {{ params.category }}</td></tr>
+          <tr><td class="label">Jersey</td><td>{{ params.jersey_size}}</td></tr>
+        </table>
+      </div>
+
+      <div class="rpc-details">
+        <p class="highlight">RPC Detail</p>
+        <table class="details-table">
+          <tr><td class="label">RPC Start Date</td><td>{{ params.rpc_date }}</td></tr>
+          <tr><td class="label">RPC End Date</td><td>{{ params.rpc_end_date }}</td></tr>
+          <tr><td class="label">RPC Times</td><td>{{ params.rpc_times }}</td></tr>
+          <tr><td class="label">RPC Location</td><td><a href="{{ params.rpc_location }}">Google Map Link</a></td></tr>
+        </table>
+      </div>
+
+      <div class="section-divider"></div>
+
+      <div class="info">
+        Tunjukkan email ini kepada anggota tim kami di tempat pengambilan.<br><br>
+        Dengan mendaftar sebagai peserta, Anda dapat mengikuti {{ params.event }}.<br>
+        Untuk informasi lebih lanjut, silakan hubungi Customer Care kami.
+      </div>
+
+      <div class="qr-code">
+        <h3>{{ params.registration_code }}</h3>
+        <img src="{{ params.qr_code_path }}" alt="QR Code">
+      </div>
+    </div>
+
+    <div class="email-footer">
+      &copy; {{ params.year }} regTIX &mdash; All rights reserved.
+    </div>
+  </div>
+</body>
 </html>
