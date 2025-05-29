@@ -76,12 +76,10 @@ class EventResource extends Resource
                         Textarea::make('description')
                             ->label('Description')
                             ->label('Description'),
-                        TextInput::make('rpc_collection_days')
-                            ->label('RPC Collection Days')
-                            ->maxLength(255),
-                        TextInput::make('rpc_collection_dates')
-                            ->label('RPC Collection Dates')
-                            ->maxLength(255),
+                DatePicker::make('rpc_start_date')
+                    ->label('RPC Start Date'),
+                DatePicker::make('rpc_end_date')
+                    ->label('RPC Start Date'),
                         TextInput::make('rpc_collection_times')
                             ->label('RPC Collection Times')
                             ->maxLength(255),

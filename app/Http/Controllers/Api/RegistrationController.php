@@ -87,13 +87,13 @@ class RegistrationController extends Controller
             $ticketType = $registration->categoryTicketType->ticketType;
             $categoryTicketType = $registration->categoryTicketType;
             $regData = $registration->toArray();
-            $regData['event'] = $event->toArray();
             $voucher = $registration->voucherCode->voucher ?? null;
             $priceReduction = $voucher ? $categoryTicketType->price * ($voucher->discount / 100) : 0;
 
             $regData = $registration->makeHidden('category_ticket_type')->toArray();
 
             $regData['category'] = $registration->categoryTicketType->category->toArray();
+            $regData['category']['event'] = $event->toArray();
             $regData['voucher_code'] = $registration->voucherCode ? [
                 ...$registration->voucherCode->toArray(),
                 'voucher' => $voucher ? [
