@@ -66,8 +66,10 @@ class MidtransWebhookController extends Controller
     private function updatePaymentStatus(string $originalOrderId, string $transactionId, string $status, string $transactionTime, string $paymentType, $grossAmount): void
     {
         $registration = Registration::where('registration_code', $originalOrderId)->first();
-        $count = Registration::where('category_ticket_type_id', $registration->category_ticket_type_id)
-            ->where('status', 'confirmed')
+        $count = Registration::where('status', 'confirmed')
+            ->whereHas('categoryTicketType.category.event', function ($q) use ($registration) {
+                $q->where('event_id', $registration->categoryTicketType->category->event->id);
+            })
             ->count();
         $regIdGenerator = new GenerateBib();
         $regId = $regIdGenerator->generateRegId($count);
