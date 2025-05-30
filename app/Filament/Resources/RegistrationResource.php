@@ -283,7 +283,7 @@ class RegistrationResource extends Resource
                     ->label('Registration ID')
                     ->form([
                 TextInput::make('registration_code')
-                            ->label('Registration ID'),
+                    ->label('Registration ID'),
                     ])
                     ->query(function (Builder $query, array $data) {
                 return $query->when($data['registration_code'], function ($query, $reg_id) {

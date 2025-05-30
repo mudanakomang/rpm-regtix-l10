@@ -76,12 +76,20 @@ class VoucherCodeResource extends Resource
     {
         $user = Auth::user();
 
-        if ($user->role->name === 'admin') {
-            return parent::getEloquentQuery();
-        }
-        return parent::getEloquentQuery()
-            ->whereHas('voucher.categoryTicketType.category.event', function ($query) use ($user) {
-                $query->where('id', $user->event_id);
+        $query = parent::getEloquentQuery();
+
+        // Filter berdasarkan user event
+        if ($user->role->name !== 'admin') {
+            $query->whereHas('voucher.categoryTicketType.category.event', function ($q) use ($user) {
+                $q->where('id', $user->event_id);
             });
+        }
+
+        // Filter berdasarkan voucher_id dari URL query param
+        if (request()->has('voucher_id')) {
+            $query->where('voucher_id', request('voucher_id'));
+        }
+
+        return $query;
     }
 }
