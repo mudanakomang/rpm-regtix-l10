@@ -294,15 +294,21 @@ class RegistrationResource extends Resource
                 ->label('Event')
                 ->options(function () {
                     $query = Event::query();
-                    if (Auth::user()->role->name !== 'admin') {
-                        $query->where('id', Auth::user()->event_id);
+                /** @var \App\Models\User $user */
+                $user = Auth::user();
+                if (Auth::user()->role->name !== 'superadmin') {
+                    // Ambil semua event id yang dimiliki user
+                    $eventIds =  $user->events()->pluck('events.id')->toArray();
+                    $query->whereIn('id', $eventIds);
                     }
-                    return $query->pluck('name', 'id')->toArray();
+
+                return $query->pluck('name', 'id')->toArray();
                 })
                 ->query(function ($query, $state) {
                     $query->when($state['value'] != null, function ($query) use ($state) {
                         $query->whereHas('categoryTicketType.category.event', function ($q) use ($state) {
-                            $q->where('id', $state);
+                        // $state biasanya value langsung id event
+                        $q->where('id', $state['value']);
                         });
                     });
                 }),
@@ -310,24 +316,30 @@ class RegistrationResource extends Resource
                 ->label('Event Category - Ticket Type')
                 ->options(function () {
                     $eventId = request('tableFilters')['event_id']['value'] ?? null;
+                /** @var \App\Models\User $user */
 
+                $user = Auth::user();
                     $query = CategoryTicketType::query()->with(['category.event', 'ticketType']);
-                    if ($eventId) {
+
+                if ($eventId) {
                         $query->whereHas('category.event', function ($q) use ($eventId) {
                             $q->where('id', $eventId);
                         });
                     }
-                if (Auth::user()->role->name !== 'admin') {
-                    $query->whereHas('category.event', function ($q) {
-                        $q->where('id', Auth::user()->event_id);
+
+                if ($user->role->name !== 'superadmin') {
+                    $eventIds = $user->events()->pluck('events.id')->toArray();
+
+                    $query->whereHas('category.event', function ($q) use ($eventIds) {
+                        $q->whereIn('id', $eventIds);
                     });
                 }
 
-
                 return $query->get()->mapWithKeys(function ($record) {
                         return [
-                            $record->id =>
-                        $record->category->event->name . ' - ' . $record->category->name . ' - ' . $record->ticketType->name,
+                        $record->id => $record->category->event->name
+                            . ' - ' . $record->category->name
+                            . ' - ' . $record->ticketType->name,
                         ];
                     })->toArray();
                 }),
@@ -417,16 +429,20 @@ class RegistrationResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
+        /** @var \App\Models\User $user */
         $user = Auth::user();
 
         // Admin bisa lihat semua
-        if ($user->role->name === 'admin') {
+        if ($user->role->name === 'superadmin') {
             return parent::getEloquentQuery();
         }
 
         // User biasa hanya lihat event tertentu
-        return parent::getEloquentQuery()->whereHas('categoryTicketType.category.event', function ($query) use ($user) {
-            $query->where('id', $user->event_id);
-        });
+        $eventIds = $user->events()->pluck('events.id')->toArray();
+
+        return parent::getEloquentQuery()
+            ->whereHas('categoryTicketType.category.event', function ($query) use ($eventIds) {
+                $query->whereIn('events.id', $eventIds);
+            });
     }
 }

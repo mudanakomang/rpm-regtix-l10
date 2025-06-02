@@ -42,13 +42,16 @@ class VoucherResource extends Resource
                 ->label('Event Category - Ticket Type')
                 ->relationship('categoryTicketType', 'id')
                 ->options(function () {
+
+                /** @var \App\Models\User $user */
                     $user = Auth::user();
 
                     $query = CategoryTicketType::query();
 
-                    if ($user->role->name !== 'admin') {
-                        $query->whereHas('category.event', function ($query) use ($user) {
-                            $query->where('id', $user->event_id);
+                if ($user->role->name !== 'superadmin') {
+                    $userIds = $user->events()->pluck('events.id')->toArray();
+                    $query->whereHas('category.event', function ($query) use ($userIds) {
+                        $query->whereIn('events.id', $userIds);
                         });
                     }
 
@@ -140,17 +143,19 @@ class VoucherResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
+        /** @var \App\Models\User $user */
         $user = Auth::user();
 
         // Admin lihat semua
-        if ($user->role->name === 'admin') {
+        if ($user->role->name === 'superadmin') {
             return parent::getEloquentQuery();
         }
 
-        // User biasa filter voucher berdasarkan event_id user
+        $eventIds = $user->events()->pluck('events.id')->toArray();
+
         return parent::getEloquentQuery()
-            ->whereHas('categoryTicketType.category.event', function ($query) use ($user) {
-                $query->where('id', $user->event_id);
+            ->whereHas('categoryTicketType.category.event', function ($query) use ($eventIds) {
+                $query->whereIn('id', $eventIds);
             });
     }
 }

@@ -19,19 +19,4 @@ class ListVouchers extends ListRecords
             Actions\CreateAction::make(),
         ];
     }
-
-    public function getTableQuery(): Builder
-    {
-        $user = Auth::user();
-
-        if ($user->role->name === 'admin') {
-            return Voucher::query()->withCount('voucherCodes');
-        }
-
-        return Voucher::query()
-            ->withCount('voucherCodes')
-            ->whereHas('categoryTicketType.category.event', function ($query) use ($user) {
-                $query->where('id', $user->event_id);
-            });
-    }
 }

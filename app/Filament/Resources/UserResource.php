@@ -19,10 +19,12 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Auth;
 
 class UserResource extends Resource
 {
     protected static ?string $model = User::class;
+    protected static ?int $navigationSort = 6;
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
     protected static ?string $navigationGroup = 'User Management';
@@ -57,12 +59,33 @@ class UserResource extends Resource
 
                 Radio::make('role_id')  // Gunakan Radio untuk memilih role
                     ->label('Role')
-                    ->options(Role::pluck('label', 'id')->toArray())  // Mengambil semua role
+                ->options(function () {
+                    $query = Role::query();
+
+                    if (Auth::user()?->role?->name === 'admin') {
+                        $query->where('name', '!=', 'superadmin');
+                    }
+
+                    return $query->pluck('label', 'id')->toArray();
+                })
                     ->required(),
-            Select::make('event_id')
-                ->label('Event')
-                ->options(Event::pluck('name', 'id'))
+            Select::make('event_ids')
+                ->label('Events')
+                ->options(function () {
+                    /** @var \App\Models\User $user */
+                    $user = Auth::user();
+
+                    // Superadmin bisa lihat semua event
+                    if ($user->role->name === 'superadmin') {
+                        return Event::pluck('name', 'id')->toArray();
+                    }
+
+                    // User biasa hanya lihat event yang dia miliki
+                    return $user->events()->pluck('events.name', 'events.id')->toArray();
+                })
                 ->searchable()
+                ->preload()
+                ->dehydrated()
                 ->required(),
             ]);
     }
@@ -88,9 +111,13 @@ class UserResource extends Resource
                     ->dateTime()
                     ->sortable()
                     ->searchable(),
-            TextColumn::make('event.name')
-                ->label('Event')
-                ->sortable()
+            TextColumn::make('events')
+                ->label('Events')
+                ->formatStateUsing(function ($state, $record) {
+                    // $record adalah model lengkap, misal User atau Voucher
+                    return $record->events->pluck('name')->join(', ');
+                })
+                ->sortable()  // Kalau mau sortable, butuh sorting custom
                 ->searchable(),
             ])
             ->filters([
@@ -124,21 +151,38 @@ class UserResource extends Resource
 
     public static function canViewAny(): bool
     {
-        return \Illuminate\Support\Facades\Auth::user()?->role?->name === 'admin';
+        return in_array(Auth::user()?->role?->name, ['superadmin', 'admin']);
     }
 
     public static function canCreate(): bool
     {
-        return \Illuminate\Support\Facades\Auth::user()?->role?->name === 'admin';
+        return in_array(Auth::user()?->role?->name, ['superadmin', 'admin']);
     }
 
     public static function canEdit($record): bool
     {
-        return \Illuminate\Support\Facades\Auth::user()?->role?->name === 'admin';
+        return in_array(Auth::user()?->role?->name, ['superadmin', 'admin']);
     }
 
     public static function canDelete($record): bool
     {
-        return \Illuminate\Support\Facades\Auth::user()?->role?->name === 'admin';
+        return in_array(Auth::user()?->role?->name, ['superadmin', 'admin']);
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        // Admin lihat semua
+        if (in_array($user->role->name, ['superadmin'])) {
+            return parent::getEloquentQuery();
+        }
+
+        // User biasa filter voucher berdasarkan event_id user
+        return parent::getEloquentQuery()
+            ->whereHas('events', function ($query) use ($user) {
+                $query->whereIn('events.id', $user->events()->pluck('events.id'));
+            });
     }
 }

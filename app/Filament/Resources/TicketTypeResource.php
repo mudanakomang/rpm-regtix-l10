@@ -82,6 +82,6 @@ class TicketTypeResource extends Resource
     }
     public static function canViewAny(): bool
     {
-        return \Illuminate\Support\Facades\Auth::user()?->role?->name === 'admin';
+        return \Illuminate\Support\Facades\Auth::user()?->role?->name === 'superadmin';
     }
 }

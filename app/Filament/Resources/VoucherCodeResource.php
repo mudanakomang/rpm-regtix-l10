@@ -74,14 +74,18 @@ class VoucherCodeResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
+        /** @var \App\Models\User $user */
         $user = Auth::user();
 
         $query = parent::getEloquentQuery();
 
         // Filter berdasarkan user event
-        if ($user->role->name !== 'admin') {
-            $query->whereHas('voucher.categoryTicketType.category.event', function ($q) use ($user) {
-                $q->where('id', $user->event_id);
+        if ($user->role->name !== 'superadmin') {
+
+            $userIds = $user->events()->pluck('events.id')->toArray();
+
+            $query->whereHas('voucher.categoryTicketType.category.event', function ($q) use ($userIds) {
+                $q->whereIn('id', $userIds);
             });
         }
 

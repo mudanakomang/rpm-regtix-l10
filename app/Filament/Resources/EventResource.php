@@ -25,6 +25,7 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
 class EventResource extends Resource
@@ -312,6 +313,21 @@ class EventResource extends Resource
     }
     public static function canViewAny(): bool
     {
-        return \Illuminate\Support\Facades\Auth::user()?->role?->name === 'admin';
+        return in_array(Auth::user()->role->name, ['superadmin', 'admin']);
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        // Admin lihat semua
+        if ($user->role->name === 'superadmin') {
+            return parent::getEloquentQuery();
+        }
+
+        $eventIds = $user->events()->pluck('events.id')->toArray();
+        // User biasa filter voucher berdasarkan event_id user
+        return parent::getEloquentQuery()->whereIn('id', $eventIds);
     }
 }

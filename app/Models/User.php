@@ -58,8 +58,8 @@ class User extends Authenticatable
         return $this->hasMany(Registration::class, 'validated_by');
     }
 
-    public function event()
+    public function events()
     {
-        return $this->belongsTo(Event::class);
+        return $this->belongsToMany(Event::class);
     }
 }
