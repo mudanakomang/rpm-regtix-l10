@@ -11,6 +11,7 @@ use Filament\Actions\ExportAction;
 use Filament\Forms\Components\Select;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 
 class ListRegistrations extends ListRecords
 {
@@ -20,6 +21,7 @@ class ListRegistrations extends ListRecords
     {
         return [
             ExportAction::make('Export')
+                ->visible(fn(): bool => in_array(Auth::user()->role->name, ['superadmin', 'admin']))
                 ->exporter(RegistrationExporter::class)
                 ->icon('heroicon-o-arrow-down-tray')
                 ->fileName('registration-' . now()->format('Y-m-d-his'))

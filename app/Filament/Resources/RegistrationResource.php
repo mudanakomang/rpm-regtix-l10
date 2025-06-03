@@ -300,7 +300,7 @@ class RegistrationResource extends Resource
                     // Ambil semua event id yang dimiliki user
                     $eventIds =  $user->events()->pluck('events.id')->toArray();
                     $query->whereIn('id', $eventIds);
-                    }
+                }
 
                 return $query->pluck('name', 'id')->toArray();
                 })
@@ -397,6 +397,7 @@ class RegistrationResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ExportBulkAction::make()
+                    ->visible(fn(): bool => in_array(Auth::user()->role->name, ['superadmin', 'admin']))
                     ->label('Export Selected')
                     ->exporter(RegistrationExporter::class)
                     ->filename('registrations-' . now()->format('Y-m-d-his'))
