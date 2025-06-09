@@ -12,16 +12,14 @@ class CreateUser extends CreateRecord
 
     protected array $eventIds = [];
 
-    protected function mutateFormDataBeforeCreate(array $data): array
+    protected function mutateFormDataBeforeSave(array $data): array
     {
-        // Ambil event_ids lalu keluarkan dari $data agar tidak error saat mass assignment
         $this->eventIds = $data['event_ids'] ?? [];
         unset($data['event_ids']);
-
         return $data;
     }
 
-    protected function afterCreate(): void
+    protected function afterSave(): void
     {
         $this->record->events()->sync($this->eventIds);
     }

@@ -71,21 +71,23 @@ class UserResource extends Resource
                     ->required(),
             Select::make('event_ids')
                 ->label('Events')
+                ->multiple()
                 ->options(function () {
-                    /** @var \App\Models\User $user */
-                    $user = Auth::user();
+                /** @var \App\Models\User $user */
+                $user = Auth::user();
 
-                    // Superadmin bisa lihat semua event
-                    if ($user->role->name === 'superadmin') {
-                        return Event::pluck('name', 'id')->toArray();
+                if ($user->role->name === 'superadmin') {
+                    return Event::pluck('name', 'id')->toArray();
+                }
+
+                return $user->events()->pluck('events.name', 'events.id')->toArray();
+            })
+                ->afterStateHydrated(function ($component, $state, $record) {
+                    if ($record) {
+                        $component->state($record->events->pluck('id')->toArray());
                     }
-
-                    // User biasa hanya lihat event yang dia miliki
-                    return $user->events()->pluck('events.name', 'events.id')->toArray();
                 })
-                ->searchable()
-                ->preload()
-                ->dehydrated()
+
                 ->required(),
             ]);
     }
